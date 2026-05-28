@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的照片日记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf8f5;
+  --bg2:#f2ede6;
+  --bg3:#e8e0d4;
+  --card:#fffdf9;
+  --border:#ddd5c8;
+  --border2:#ccc3b5;
+  --text:#2c2418;
+  --text2:#6b5e4e;
+  --text3:#a0917e;
+  --accent:#8b6f47;
+  --accent2:#c4973e;
+  --danger:#b94040;
+  --shadow:0 2px 12px rgba(139,111,71,0.10);
+  --shadow2:0 4px 24px rgba(139,111,71,0.15);
+  --radius:12px;
+  --radius-sm:8px;
+}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(139,111,71,0.07)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{font-size:22px}
+.logo-text h1{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--text);letter-spacing:0.05em}
+.logo-text p{font-size:11px;color:var(--text3);margin-top:1px}
+.btn{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif;background:transparent}
+.btn:hover{background:var(--bg2);border-color:var(--accent)}
+.btn-primary{background:var(--accent);color:#fffdf9;border-color:transparent;font-weight:500}
+.btn-primary:hover{background:#7a6040;border-color:transparent}
+
+/* TOOLBAR */
+.toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;width:15px;height:15px}
+.search-wrap input{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;transition:border-color 0.15s}
+.search-wrap input:focus{outline:none;border-color:var(--accent)}
+.tags-filter{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag-btn{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif}
+.tag-btn.active{background:var(--accent);color:#fffdf9;border-color:transparent}
+.tag-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+/* CONTENT */
+.content{padding:24px 28px;max-width:1000px;margin:0 auto}
+.empty-state{text-align:center;padding:80px 24px;color:var(--text3)}
+.empty-state .empty-icon{font-size:52px;margin-bottom:16px}
+.empty-state p{font-family:'Noto Serif SC',serif;font-size:16px;margin-bottom:20px;color:var(--text2)}
+.no-results{text-align:center;padding:60px 24px;color:var(--text3)}
+.no-results .empty-icon{font-size:40px;margin-bottom:12px}
+.no-results p{font-size:14px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow)}
+.card:hover{border-color:var(--accent2);box-shadow:var(--shadow2);transform:translateY(-2px)}
+.card-img{width:100%;height:165px;object-fit:cover;display:block}
+.card-img-ph{width:100%;height:165px;display:flex;align-items:center;justify-content:center;background:var(--bg2);color:var(--text3);font-size:36px}
+.card-body{padding:12px 14px 6px}
+.card-date{font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:0.03em}
+.card-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.card-text{font-size:12px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;padding:8px 14px 0}
+.card-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.card-footer{display:flex;justify-content:flex-end;gap:4px;padding:8px 10px 10px}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:5px 7px;border-radius:6px;display:inline-flex;align-items:center;transition:all 0.15s;font-size:14px}
+.icon-btn:hover{color:var(--accent);background:var(--bg2)}
+.icon-btn.danger:hover{color:var(--danger);background:#fdf0f0}
+mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(44,36,24,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px)}
+.modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-header{padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:14px}
+.modal-header h2{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;color:var(--text)}
+.modal-body{padding:18px 20px 20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--text3);margin-bottom:5px;font-weight:500;letter-spacing:0.04em}
+.field input,.field textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;font-size:13px;background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;resize:vertical;transition:border-color 0.15s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.field textarea{min-height:90px;line-height:1.7}
+.upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:26px;text-align:center;cursor:pointer;transition:all 0.15s;position:relative;background:var(--bg)}
+.upload-area:hover{border-color:var(--accent);background:var(--bg2)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-area .upload-icon{font-size:28px;margin-bottom:8px}
+.upload-area p{font-size:12px;color:var(--text3)}
+.preview-wrap{position:relative;margin-bottom:12px}
+.preview-img{width:100%;max-height:190px;object-fit:cover;border-radius:var(--radius-sm);display:block}
+.remove-img{position:absolute;top:6px;right:6px;background:rgba(44,36,24,0.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:4px;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
+
+/* VIEW MODAL */
+.view-modal{max-width:640px}
+.view-img{width:100%;max-height:340px;object-fit:contain;border-radius:var(--radius-sm);background:var(--bg2);display:block;margin-bottom:14px}
+.view-date{font-size:12px;color:var(--text3);margin-bottom:4px;letter-spacing:0.04em}
+.view-title{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.view-text{font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-wrap}
+.view-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.view-tag{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.view-header-btns{display:flex;gap:6px}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .header,.toolbar,.content{padding-left:16px;padding-right:16px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card-img,.card-img-ph{height:130px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">📓</div>
+    <div class="logo-text">
+      <h1>我的照片日记</h1>
+      <p id="subtitle">暂无记录</p>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="openNew()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    新建记录
+  </button>
+</div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索标题、内容、标签…" oninput="filterRender()">
+  </div>
+  <div id="tagsFilter" class="tags-filter"></div>
+</div>
+
+<div class="content">
+  <div id="emptyState" class="empty-state" style="display:none">
+    <div class="empty-icon">🌿</div>
+    <p>还没有任何记录，点击「新建记录」开始你的第一篇日记吧</p>
+    <button class="btn btn-primary" onclick="openNew()">开始记录</button>
+  </div>
+  <div id="noResults" class="no-results" style="display:none">
+    <div class="empty-icon">🔍</div>
+    <p>没有找到匹配的记录</p>
+  </div>
+  <div id="grid" class="grid"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="overlay" style="display:none" onclick="overlayClose(event,'editModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">新建记录</h2>
+      <button class="icon-btn" onclick="closeModal('editModal')" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>照片</label>
+        <div id="previewWrap" class="preview-wrap" style="display:none">
+          <img id="imgPreview" class="preview-img" alt="">
+          <button class="remove-img" onclick="removeImg()">✕</button>
+        </div>
+        <div id="uploadArea" class="upload-area">
+          <input type="file" accept="image/*" onchange="handleImg(event)" id="imgInput">
+          <div class="upload-icon">🖼️</div>
+          <p>点击或拖入图片上传</p>
+        </div>
+      </div>
+      <div class="field"><label>标题</label><input type="text" id="titleInput" placeholder="给这段记忆起个名字…"></div>
+      <div class="field"><label>日期</label><input type="date" id="dateInput"></div>
+      <div class="field"><label>记录 / 说明</label><textarea id="textInput" placeholder="记录当时的心情、故事或感悟…"></textarea></div>
+      <div class="field"><label>标签（用逗号分隔）</label><input type="text" id="tagsInput" placeholder="旅行, 家人, 美食…"></div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('editModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveEntry()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div id="viewModal" class="overlay" style="display:none" onclick="overlayClose(event,'viewModal')">
+  <div class="modal view-modal">
+    <div class="modal-header">
+      <div class="view-header-btns">
+        <button class="btn" onclick="editCurrent()" style="font-size:12px;padding:6px 12px">✏️ 编辑</button>
+        <button class="btn" onclick="deleteCurrent()" style="font-size:12px;padding:6px 12px;color:var(--danger)">🗑️ 删除</button>
+      </div>
+      <button class="icon-btn" onclick="closeModal('viewModal')" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <img id="viewImg" class="view-img" style="display:none" alt="">
+      <div id="viewDate" class="view-date"></div>
+      <div id="viewTitle" class="view-title"></div>
+      <div id="viewText" class="view-text"></div>
+      <div id="viewTags" class="view-tags"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORE_KEY='photo_diary_v1';
+let entries=[],editId=null,viewId=null,imgData=null,activeTag=null;
+
+function load(){try{const r=localStorage.getItem(STORE_KEY);entries=r?JSON.parse(r):[]}catch{entries=[]}}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(entries))}catch{}}
+function today(){return new Date().toISOString().split('T')[0]}
+function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日'}
+function allTags(){const s=new Set();entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t)));return[...s]}
+function hl(t,q){if(!q||!t)return t||'';const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>')}
+
+function renderTagsFilter(){
+  const tags=allTags();
+  const w=document.getElementById('tagsFilter');
+  if(!tags.length){w.innerHTML='';return}
+  w.innerHTML=`<button class="tag-btn ${!activeTag?'active':''}" onclick="setTag(null)">全部</button>`+
+    tags.map(t=>`<button class="tag-btn ${activeTag===t?'active':''}" onclick="setTag('${t.replace(/'/g,"\\'")}'">${t}</button>`).join('');
+}
+function setTag(t){activeTag=t;renderTagsFilter();filterRender()}
+
+function filterRender(){
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  const filtered=sorted.filter(e=>{
+    if(activeTag&&!(e.tags||[]).includes(activeTag))return false;
+    if(!q)return true;
+    return(e.title||'').toLowerCase().includes(q)||(e.text||'').toLowerCase().includes(q)||(e.tags||[]).some(t=>t.toLowerCase().includes(q));
+  });
+  const grid=document.getElementById('grid');
+  const emp=document.getElementById('emptyState');
+  const nor=document.getElementById('noResults');
+  const sub=document.getElementById('subtitle');
+  sub.textContent='共 '+entries.length+' 篇记录';
+  if(entries.length===0){emp.style.display='block';nor.style.display='none';grid.innerHTML='';sub.textContent='暂无记录';return}
+  emp.style.display='none';
+  if(filtered.length===0){nor.style.display='block';grid.innerHTML='';return}
+  nor.style.display='none';
+  grid.innerHTML=filtered.map(e=>`
+    <div class="card" onclick="viewEntry('${e.id}')">
+      ${e.img?`<img class="card-img" src="${e.img}" alt="${(e.title||'').replace(/"/g,'&quot;')}">`:
+      `<div class="card-img-ph">🖼️</div>`}
+      <div class="card-body">
+        <div class="card-date">${fmt(e.date)}</div>
+        <div class="card-title">${q?hl(e.title||'无标题',q):e.title||'无标题'}</div>
+        <div class="card-text">${q?hl(e.text||'',q):(e.text||'')}</div>
+      </div>
+      ${(e.tags||[]).length?`<div class="card-tags">${(e.tags||[]).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>`:''}
+      <div class="card-footer">
+        <button class="icon-btn" onclick="event.stopPropagation();editEntry('${e.id}')" title="编辑">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();deleteEntry('${e.id}')" title="删除">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function render(){renderTagsFilter();filterRender()}
+
+function openNew(){
+  editId=null;imgData=null;
+  document.getElementById('titleInput').value='';
+  document.getElementById('dateInput').value=today();
+  document.getElementById('textInput').value='';
+  document.getElementById('tagsInput').value='';
+  document.getElementById('imgPreview').src='';
+  document.getElementById('previewWrap').style.display='none';
+  document.getElementById('uploadArea').style.display='block';
+  document.getElementById('imgInput').value='';
+  document.getElementById('modalTitle').textContent='新建记录';
+  document.getElementById('editModal').style.display='flex';
+}
+
+function editEntry(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  editId=id;imgData=e.img||null;
+  document.getElementById('titleInput').value=e.title||'';
+  document.getElementById('dateInput').value=e.date||today();
+  document.getElementById('textInput').value=e.text||'';
+  document.getElementById('tagsInput').value=(e.tags||[]).join(', ');
+  document.getElementById('imgInput').value='';
+  if(e.img){document.getElementById('imgPreview').src=e.img;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none'}
+  else{document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block'}
+  document.getElementById('modalTitle').textContent='编辑记录';
+  document.getElementById('editModal').style.display='flex';
+}
+
+function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value=''}
+function editCurrent(){closeModal('viewModal');editEntry(viewId)}
+function deleteCurrent(){deleteEntry(viewId);closeModal('viewModal')}
+function deleteEntry(id){if(!confirm('确定删除这条记录吗？'))return;entries=entries.filter(x=>x.id!==id);save();render()}
+
+function handleImg(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    imgData=ev.target.result;
+    document.getElementById('imgPreview').src=imgData;
+    document.getElementById('previewWrap').style.display='block';
+    document.getElementById('uploadArea').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveEntry(){
+  const title=document.getElementById('titleInput').value.trim();
+  const date=document.getElementById('dateInput').value||today();
+  const text=document.getElementById('textInput').value.trim();
+  const tagsRaw=document.getElementById('tagsInput').value.trim();
+  const tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
+  if(!title&&!imgData&&!text){alert('请至少填写标题、上传照片或写点内容');return}
+  if(editId){const e=entries.find(x=>x.id===editId);if(e){e.title=title;e.date=date;e.text=text;e.tags=tags;if(imgData!==null)e.img=imgData}}
+  else entries.push({id:Date.now().toString(),title,date,text,tags,img:imgData});
+  save();closeModal('editModal');render();
+}
+
+function viewEntry(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  viewId=id;
+  document.getElementById('viewDate').textContent=fmt(e.date);
+  document.getElementById('viewTitle').textContent=e.title||'无标题';
+  document.getElementById('viewText').textContent=e.text||'';
+  const img=document.getElementById('viewImg');
+  if(e.img){img.src=e.img;img.style.display='block'}else img.style.display='none';
+  document.getElementById('viewTags').innerHTML=(e.tags||[]).map(t=>`<span class="view-tag">${t}</span>`).join('');
+  document.getElementById('viewModal').style.display='flex';
+}
+
+function closeModal(id){document.getElementById(id).style.display='none'}
+function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id)}
+
+load();render();
+</script>
+</body>
+</html>
