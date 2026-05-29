@@ -4,42 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我的照片日记</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#faf8f5;
-  --bg2:#f2ede6;
-  --bg3:#e8e0d4;
-  --card:#fffdf9;
-  --border:#ddd5c8;
-  --border2:#ccc3b5;
-  --text:#2c2418;
-  --text2:#6b5e4e;
-  --text3:#a0917e;
-  --accent:#8b6f47;
-  --accent2:#c4973e;
-  --danger:#b94040;
-  --shadow:0 2px 12px rgba(139,111,71,0.10);
-  --shadow2:0 4px 24px rgba(139,111,71,0.15);
-  --radius:12px;
-  --radius-sm:8px;
+  --bg:#faf8f5;--bg2:#f2ede6;--bg3:#e8e0d4;--card:#fffdf9;
+  --border:#ddd5c8;--border2:#ccc3b5;--text:#2c2418;--text2:#6b5e4e;
+  --text3:#a0917e;--accent:#8b6f47;--accent2:#c4973e;--danger:#b94040;
+  --shadow:0 2px 12px rgba(139,111,71,0.10);--shadow2:0 4px 24px rgba(139,111,71,0.15);
+  --radius:12px;--radius-sm:8px;
 }
 body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-
-/* HEADER */
 .header{background:var(--card);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(139,111,71,0.07)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{font-size:22px}
 .logo-text h1{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--text);letter-spacing:0.05em}
 .logo-text p{font-size:11px;color:var(--text3);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.sync-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.sync-dot.ok{background:#5cb85c}
+.sync-dot.err{background:var(--danger)}
+.sync-dot.loading{background:var(--accent2);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .btn{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif;background:transparent}
 .btn:hover{background:var(--bg2);border-color:var(--accent)}
 .btn-primary{background:var(--accent);color:#fffdf9;border-color:transparent;font-weight:500}
 .btn-primary:hover{background:#7a6040;border-color:transparent}
-
-/* TOOLBAR */
 .toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .search-wrap{position:relative;flex:1;min-width:180px}
 .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;width:15px;height:15px}
@@ -49,24 +40,19 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .tag-btn{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif}
 .tag-btn.active{background:var(--accent);color:#fffdf9;border-color:transparent}
 .tag-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
-
-/* CONTENT */
 .content{padding:24px 28px;max-width:1000px;margin:0 auto}
 .empty-state{text-align:center;padding:80px 24px;color:var(--text3)}
 .empty-state .empty-icon{font-size:52px;margin-bottom:16px}
 .empty-state p{font-family:'Noto Serif SC',serif;font-size:16px;margin-bottom:20px;color:var(--text2)}
 .no-results{text-align:center;padding:60px 24px;color:var(--text3)}
 .no-results .empty-icon{font-size:40px;margin-bottom:12px}
-.no-results p{font-size:14px}
-
-/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow)}
 .card:hover{border-color:var(--accent2);box-shadow:var(--shadow2);transform:translateY(-2px)}
 .card-img{width:100%;height:165px;object-fit:cover;display:block}
 .card-img-ph{width:100%;height:165px;display:flex;align-items:center;justify-content:center;background:var(--bg2);color:var(--text3);font-size:36px}
 .card-body{padding:12px 14px 6px}
-.card-date{font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:0.03em}
+.card-date{font-size:11px;color:var(--text3);margin-bottom:4px}
 .card-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
 .card-text{font-size:12px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
 .card-tags{display:flex;gap:4px;flex-wrap:wrap;padding:8px 14px 0}
@@ -76,11 +62,9 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .icon-btn:hover{color:var(--accent);background:var(--bg2)}
 .icon-btn.danger:hover{color:var(--danger);background:#fdf0f0}
 mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
-
-/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(44,36,24,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px)}
 .modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
-.modal-header{padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:14px}
+.modal-header{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .modal-header h2{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;color:var(--text)}
 .modal-body{padding:18px 20px 20px}
 .field{margin-bottom:16px}
@@ -96,27 +80,40 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
 .preview-wrap{position:relative;margin-bottom:12px}
 .preview-img{width:100%;max-height:190px;object-fit:cover;border-radius:var(--radius-sm);display:block}
 .remove-img{position:absolute;top:6px;right:6px;background:rgba(44,36,24,0.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:4px;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
-
-/* VIEW MODAL */
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
 .view-modal{max-width:640px}
 .view-img{width:100%;max-height:340px;object-fit:contain;border-radius:var(--radius-sm);background:var(--bg2);display:block;margin-bottom:14px}
-.view-date{font-size:12px;color:var(--text3);margin-bottom:4px;letter-spacing:0.04em}
+.view-date{font-size:12px;color:var(--text3);margin-bottom:4px}
 .view-title{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;margin-bottom:10px;color:var(--text)}
 .view-text{font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-wrap}
 .view-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 .view-tag{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
-.view-header-btns{display:flex;gap:6px}
 
-/* RESPONSIVE */
+/* 口令弹窗 */
+.passphrase-modal{max-width:400px}
+.passphrase-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.passphrase-hint{font-size:12px;color:var(--text3);margin-top:8px}
+
+/* 加载遮罩 */
+.loading-overlay{position:fixed;inset:0;background:rgba(250,248,245,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:12px}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text2)}
+
 @media(max-width:600px){
   .header,.toolbar,.content{padding-left:16px;padding-right:16px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
   .card-img,.card-img-ph{height:130px}
+  .sync-status span{display:none}
 }
 </style>
 </head>
 <body>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">正在连接云端…</div>
+</div>
 
 <div class="header">
   <div class="logo">
@@ -126,10 +123,14 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
       <p id="subtitle">暂无记录</p>
     </div>
   </div>
-  <button class="btn btn-primary" onclick="openNew()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    新建记录
-  </button>
+  <div class="header-right">
+    <div class="sync-status">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncText">未连接</span>
+    </div>
+    <button class="btn" onclick="openPassphrase()" style="font-size:12px;padding:6px 12px">🔑 切换口令</button>
+    <button class="btn btn-primary" onclick="openNew()">＋ 新建记录</button>
+  </div>
 </div>
 
 <div class="toolbar">
@@ -153,12 +154,32 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
   <div id="grid" class="grid"></div>
 </div>
 
-<!-- EDIT MODAL -->
+<!-- 口令弹窗 -->
+<div id="passphraseModal" class="overlay" style="display:none">
+  <div class="modal passphrase-modal">
+    <div class="modal-header">
+      <h2>🔑 输入访问口令</h2>
+    </div>
+    <div class="modal-body">
+      <p class="passphrase-desc">所有使用相同口令的设备将共享同一份日记数据。请在你的所有设备上输入同一个口令。</p>
+      <div class="field">
+        <label>口令（自己设定，记住就好）</label>
+        <input type="text" id="passphraseInput" placeholder="例如：mysecretdiary2024" autocomplete="off">
+        <p class="passphrase-hint">⚠️ 口令区分大小写，请在所有设备上保持一致</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="confirmPassphrase()">确认进入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑弹窗 -->
 <div id="editModal" class="overlay" style="display:none" onclick="overlayClose(event,'editModal')">
   <div class="modal">
     <div class="modal-header">
       <h2 id="modalTitle">新建记录</h2>
-      <button class="icon-btn" onclick="closeModal('editModal')" aria-label="关闭">✕</button>
+      <button class="icon-btn" onclick="closeModal('editModal')">✕</button>
     </div>
     <div class="modal-body">
       <div class="field">
@@ -185,15 +206,15 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
   </div>
 </div>
 
-<!-- VIEW MODAL -->
+<!-- 查看弹窗 -->
 <div id="viewModal" class="overlay" style="display:none" onclick="overlayClose(event,'viewModal')">
   <div class="modal view-modal">
     <div class="modal-header">
-      <div class="view-header-btns">
+      <div style="display:flex;gap:6px">
         <button class="btn" onclick="editCurrent()" style="font-size:12px;padding:6px 12px">✏️ 编辑</button>
         <button class="btn" onclick="deleteCurrent()" style="font-size:12px;padding:6px 12px;color:var(--danger)">🗑️ 删除</button>
       </div>
-      <button class="icon-btn" onclick="closeModal('viewModal')" aria-label="关闭">✕</button>
+      <button class="icon-btn" onclick="closeModal('viewModal')">✕</button>
     </div>
     <div class="modal-body">
       <img id="viewImg" class="view-img" style="display:none" alt="">
@@ -206,41 +227,131 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
 </div>
 
 <script>
-const STORE_KEY='photo_diary_v1';
-let entries=[],editId=null,viewId=null,imgData=null,activeTag=null;
+// ===== Supabase 配置 =====
+const SUPABASE_URL = 'https://ypjyuuoddukuwcquqgny.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hRBNbp6yg2IDOcnDXh9tdw_foNAi3gZ';
+const TABLE = 'diary_entries';
 
-function load(){try{const r=localStorage.getItem(STORE_KEY);entries=r?JSON.parse(r):[]}catch{entries=[]}}
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(entries))}catch{}}
-function today(){return new Date().toISOString().split('T')[0]}
-function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日'}
-function allTags(){const s=new Set();entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t)));return[...s]}
-function hl(t,q){if(!q||!t)return t||'';const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>')}
+// ===== 状态 =====
+let entries = [];
+let passphrase = '';
+let editId = null, viewId = null, imgData = null, activeTag = null;
 
-function renderTagsFilter(){
-  const tags=allTags();
-  const w=document.getElementById('tagsFilter');
-  if(!tags.length){w.innerHTML='';return}
-  w.innerHTML=`<button class="tag-btn ${!activeTag?'active':''}" onclick="setTag(null)">全部</button>`+
+// ===== Supabase API =====
+async function sbFetch(path, options = {}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+async function loadFromCloud() {
+  setSyncStatus('loading', '同步中…');
+  try {
+    const data = await sbFetch(TABLE + '?passphrase=eq.' + encodeURIComponent(passphrase) + '&order=date.desc');
+    entries = data.map(r => ({
+      id: r.id,
+      title: r.title || '',
+      date: r.date || '',
+      text: r.content || '',
+      tags: r.tags || [],
+      img: r.img || null
+    }));
+    setSyncStatus('ok', '已同步');
+    render();
+  } catch(e) {
+    setSyncStatus('err', '同步失败');
+    console.error(e);
+  }
+}
+
+async function upsertEntry(entry) {
+  setSyncStatus('loading', '保存中…');
+  try {
+    await sbFetch(TABLE, {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify({
+        id: entry.id,
+        passphrase: passphrase,
+        title: entry.title,
+        date: entry.date,
+        content: entry.text,
+        tags: entry.tags,
+        img: entry.img,
+        updated_at: new Date().toISOString()
+      })
+    });
+    setSyncStatus('ok', '已同步');
+  } catch(e) {
+    setSyncStatus('err', '保存失败');
+    console.error(e);
+  }
+}
+
+async function deleteFromCloud(id) {
+  setSyncStatus('loading', '删除中…');
+  try {
+    await sbFetch(TABLE + '?id=eq.' + id + '&passphrase=eq.' + encodeURIComponent(passphrase), {
+      method: 'DELETE'
+    });
+    setSyncStatus('ok', '已同步');
+  } catch(e) {
+    setSyncStatus('err', '删除失败');
+    console.error(e);
+  }
+}
+
+// ===== UI 工具 =====
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  dot.className = 'sync-dot ' + state;
+  txt.textContent = text;
+}
+
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmt(d) { if(!d) return ''; const p=d.split('-'); return p[0]+'年'+p[1]+'月'+p[2]+'日'; }
+function allTags() { const s=new Set(); entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t))); return[...s]; }
+function hl(t,q) { if(!q||!t)return t||''; const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>'); }
+
+function renderTagsFilter() {
+  const tags = allTags();
+  const w = document.getElementById('tagsFilter');
+  if(!tags.length){w.innerHTML='';return;}
+  w.innerHTML = `<button class="tag-btn ${!activeTag?'active':''}" onclick="setTag(null)">全部</button>` +
     tags.map(t=>`<button class="tag-btn ${activeTag===t?'active':''}" onclick="setTag('${t.replace(/'/g,"\\'")}'">${t}</button>`).join('');
 }
-function setTag(t){activeTag=t;renderTagsFilter();filterRender()}
+function setTag(t){activeTag=t;renderTagsFilter();filterRender();}
 
-function filterRender(){
-  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
-  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  const filtered=sorted.filter(e=>{
-    if(activeTag&&!(e.tags||[]).includes(activeTag))return false;
-    if(!q)return true;
-    return(e.title||'').toLowerCase().includes(q)||(e.text||'').toLowerCase().includes(q)||(e.tags||[]).some(t=>t.toLowerCase().includes(q));
+function filterRender() {
+  const q = (document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const sorted = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  const filtered = sorted.filter(e => {
+    if(activeTag && !(e.tags||[]).includes(activeTag)) return false;
+    if(!q) return true;
+    return (e.title||'').toLowerCase().includes(q)||(e.text||'').toLowerCase().includes(q)||(e.tags||[]).some(t=>t.toLowerCase().includes(q));
   });
   const grid=document.getElementById('grid');
   const emp=document.getElementById('emptyState');
   const nor=document.getElementById('noResults');
   const sub=document.getElementById('subtitle');
   sub.textContent='共 '+entries.length+' 篇记录';
-  if(entries.length===0){emp.style.display='block';nor.style.display='none';grid.innerHTML='';sub.textContent='暂无记录';return}
+  if(entries.length===0){emp.style.display='block';nor.style.display='none';grid.innerHTML='';sub.textContent='暂无记录';return;}
   emp.style.display='none';
-  if(filtered.length===0){nor.style.display='block';grid.innerHTML='';return}
+  if(filtered.length===0){nor.style.display='block';grid.innerHTML='';return;}
   nor.style.display='none';
   grid.innerHTML=filtered.map(e=>`
     <div class="card" onclick="viewEntry('${e.id}')">
@@ -258,10 +369,24 @@ function filterRender(){
       </div>
     </div>`).join('');
 }
+function render(){renderTagsFilter();filterRender();}
 
-function render(){renderTagsFilter();filterRender()}
+// ===== 口令 =====
+function openPassphrase() {
+  document.getElementById('passphraseInput').value = passphrase || '';
+  document.getElementById('passphraseModal').style.display = 'flex';
+}
+function confirmPassphrase() {
+  const val = document.getElementById('passphraseInput').value.trim();
+  if(!val){alert('请输入口令');return;}
+  passphrase = val;
+  localStorage.setItem('diary_passphrase', passphrase);
+  closeModal('passphraseModal');
+  loadFromCloud();
+}
 
-function openNew(){
+// ===== 编辑 =====
+function openNew() {
   editId=null;imgData=null;
   document.getElementById('titleInput').value='';
   document.getElementById('dateInput').value=today();
@@ -274,8 +399,7 @@ function openNew(){
   document.getElementById('modalTitle').textContent='新建记录';
   document.getElementById('editModal').style.display='flex';
 }
-
-function editEntry(id){
+function editEntry(id) {
   const e=entries.find(x=>x.id===id);if(!e)return;
   editId=id;imgData=e.img||null;
   document.getElementById('titleInput').value=e.title||'';
@@ -283,41 +407,39 @@ function editEntry(id){
   document.getElementById('textInput').value=e.text||'';
   document.getElementById('tagsInput').value=(e.tags||[]).join(', ');
   document.getElementById('imgInput').value='';
-  if(e.img){document.getElementById('imgPreview').src=e.img;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none'}
-  else{document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block'}
+  if(e.img){document.getElementById('imgPreview').src=e.img;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none';}
+  else{document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';}
   document.getElementById('modalTitle').textContent='编辑记录';
   document.getElementById('editModal').style.display='flex';
 }
-
-function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value=''}
-function editCurrent(){closeModal('viewModal');editEntry(viewId)}
-function deleteCurrent(){deleteEntry(viewId);closeModal('viewModal')}
-function deleteEntry(id){if(!confirm('确定删除这条记录吗？'))return;entries=entries.filter(x=>x.id!==id);save();render()}
-
+function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value='';}
+function editCurrent(){closeModal('viewModal');editEntry(viewId);}
+function deleteCurrent(){deleteEntry(viewId);closeModal('viewModal');}
+async function deleteEntry(id){
+  if(!confirm('确定删除这条记录吗？'))return;
+  entries=entries.filter(x=>x.id!==id);
+  render();
+  await deleteFromCloud(id);
+}
 function handleImg(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=ev=>{
-    imgData=ev.target.result;
-    document.getElementById('imgPreview').src=imgData;
-    document.getElementById('previewWrap').style.display='block';
-    document.getElementById('uploadArea').style.display='none';
-  };
+  reader.onload=ev=>{imgData=ev.target.result;document.getElementById('imgPreview').src=imgData;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none';};
   reader.readAsDataURL(file);
 }
-
-function saveEntry(){
+async function saveEntry(){
   const title=document.getElementById('titleInput').value.trim();
   const date=document.getElementById('dateInput').value||today();
   const text=document.getElementById('textInput').value.trim();
   const tagsRaw=document.getElementById('tagsInput').value.trim();
   const tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
-  if(!title&&!imgData&&!text){alert('请至少填写标题、上传照片或写点内容');return}
-  if(editId){const e=entries.find(x=>x.id===editId);if(e){e.title=title;e.date=date;e.text=text;e.tags=tags;if(imgData!==null)e.img=imgData}}
-  else entries.push({id:Date.now().toString(),title,date,text,tags,img:imgData});
-  save();closeModal('editModal');render();
+  if(!title&&!imgData&&!text){alert('请至少填写标题、上传照片或写点内容');return;}
+  const entry={id:editId||Date.now().toString(),title,date,text,tags,img:imgData};
+  if(editId){const i=entries.findIndex(x=>x.id===editId);if(i>=0)entries[i]=entry;}
+  else entries.unshift(entry);
+  closeModal('editModal');render();
+  await upsertEntry(entry);
 }
-
 function viewEntry(id){
   const e=entries.find(x=>x.id===id);if(!e)return;
   viewId=id;
@@ -325,15 +447,24 @@ function viewEntry(id){
   document.getElementById('viewTitle').textContent=e.title||'无标题';
   document.getElementById('viewText').textContent=e.text||'';
   const img=document.getElementById('viewImg');
-  if(e.img){img.src=e.img;img.style.display='block'}else img.style.display='none';
+  if(e.img){img.src=e.img;img.style.display='block';}else img.style.display='none';
   document.getElementById('viewTags').innerHTML=(e.tags||[]).map(t=>`<span class="view-tag">${t}</span>`).join('');
   document.getElementById('viewModal').style.display='flex';
 }
+function closeModal(id){document.getElementById(id).style.display='none';}
+function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
 
-function closeModal(id){document.getElementById(id).style.display='none'}
-function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id)}
-
-load();render();
+// ===== 启动 =====
+(async function init(){
+  const saved = localStorage.getItem('diary_passphrase');
+  document.getElementById('loadingOverlay').style.display='none';
+  if(saved){
+    passphrase=saved;
+    await loadFromCloud();
+  } else {
+    openPassphrase();
+  }
+})();
 </script>
 </body>
 </html>
