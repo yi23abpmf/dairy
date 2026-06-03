@@ -4,33 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我的照片日记</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#faf8f5;--bg2:#f2ede6;--bg3:#e8e0d4;--card:#fffdf9;
-  --border:#ddd5c8;--border2:#ccc3b5;--text:#2c2418;--text2:#6b5e4e;
-  --text3:#a0917e;--accent:#8b6f47;--accent2:#c4973e;--danger:#b94040;
-  --shadow:0 2px 12px rgba(139,111,71,0.10);--shadow2:0 4px 24px rgba(139,111,71,0.15);
+  --bg:#faf8f5;--bg2:#f2ede6;--card:#fffdf9;
+  --border:#ddd5c8;--border2:#ccc3b5;
+  --text:#2c2418;--text2:#6b5e4e;--text3:#a0917e;
+  --accent:#8b6f47;--accent2:#c4973e;--danger:#b94040;
+  --shadow:0 2px 12px rgba(139,111,71,0.10);
+  --shadow2:0 4px 24px rgba(139,111,71,0.18);
   --radius:12px;--radius-sm:8px;
 }
 body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.header{background:var(--card);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(139,111,71,0.07)}
+
+/* HEADER */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(139,111,71,0.07)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{font-size:22px}
-.logo-text h1{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--text);letter-spacing:0.05em}
+.logo-icon{font-size:20px}
+.logo-text h1{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:600;letter-spacing:0.05em}
 .logo-text p{font-size:11px;color:var(--text3);margin-top:1px}
-.header-right{display:flex;align-items:center;gap:10px}
+.header-right{display:flex;align-items:center;gap:8px}
 .sync-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
-.sync-dot.ok{background:#5cb85c}
-.sync-dot.err{background:var(--danger)}
-.sync-dot.loading{background:var(--accent2);animation:pulse 1s infinite}
+.sync-dot.ok{background:#5cb85c}.sync-dot.err{background:var(--danger)}.sync-dot.loading{background:var(--accent2);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.btn{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif;background:transparent}
+.btn{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 14px;font-size:13px;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif;background:transparent}
 .btn:hover{background:var(--bg2);border-color:var(--accent)}
 .btn-primary{background:var(--accent);color:#fffdf9;border-color:transparent;font-weight:500}
-.btn-primary:hover{background:#7a6040;border-color:transparent}
+.btn-primary:hover{background:#7a6040}
+.btn-book{background:var(--accent2);color:#fffdf9;border-color:transparent;font-weight:500}
+.btn-book:hover{background:#b8882e}
+
+/* TOOLBAR */
 .toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .search-wrap{position:relative;flex:1;min-width:180px}
 .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;width:15px;height:15px}
@@ -40,12 +46,15 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .tag-btn{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif}
 .tag-btn.active{background:var(--accent);color:#fffdf9;border-color:transparent}
 .tag-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+/* CONTENT */
 .content{padding:24px 28px;max-width:1000px;margin:0 auto}
 .empty-state{text-align:center;padding:80px 24px;color:var(--text3)}
-.empty-state .empty-icon{font-size:52px;margin-bottom:16px}
+.empty-icon{font-size:52px;margin-bottom:16px}
 .empty-state p{font-family:'Noto Serif SC',serif;font-size:16px;margin-bottom:20px;color:var(--text2)}
 .no-results{text-align:center;padding:60px 24px;color:var(--text3)}
-.no-results .empty-icon{font-size:40px;margin-bottom:12px}
+
+/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow)}
 .card:hover{border-color:var(--accent2);box-shadow:var(--shadow2);transform:translateY(-2px)}
@@ -62,10 +71,12 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .icon-btn:hover{color:var(--accent);background:var(--bg2)}
 .icon-btn.danger:hover{color:var(--danger);background:#fdf0f0}
 mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
+
+/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(44,36,24,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px)}
 .modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
 .modal-header{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
-.modal-header h2{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;color:var(--text)}
+.modal-header h2{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600}
 .modal-body{padding:18px 20px 20px}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:12px;color:var(--text3);margin-bottom:5px;font-weight:500;letter-spacing:0.04em}
@@ -75,27 +86,87 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
 .upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:26px;text-align:center;cursor:pointer;transition:all 0.15s;position:relative;background:var(--bg)}
 .upload-area:hover{border-color:var(--accent);background:var(--bg2)}
 .upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-area .upload-icon{font-size:28px;margin-bottom:8px}
+.upload-icon{font-size:28px;margin-bottom:8px}
 .upload-area p{font-size:12px;color:var(--text3)}
 .preview-wrap{position:relative;margin-bottom:12px}
 .preview-img{width:100%;max-height:190px;object-fit:cover;border-radius:var(--radius-sm);display:block}
 .remove-img{position:absolute;top:6px;right:6px;background:rgba(44,36,24,0.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
-.view-modal{max-width:640px}
-.view-img{width:100%;max-height:340px;object-fit:contain;border-radius:var(--radius-sm);background:var(--bg2);display:block;margin-bottom:14px}
-.view-date{font-size:12px;color:var(--text3);margin-bottom:4px}
-.view-title{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;margin-bottom:10px;color:var(--text)}
-.view-text{font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-wrap}
-.view-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
-.view-tag{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
 
 /* 口令弹窗 */
 .passphrase-modal{max-width:400px}
 .passphrase-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
 .passphrase-hint{font-size:12px;color:var(--text3);margin-top:8px}
 
-/* 加载遮罩 */
-.loading-overlay{position:fixed;inset:0;background:rgba(250,248,245,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:12px}
+/* ===== 翻书阅读模式 ===== */
+.book-overlay{position:fixed;inset:0;background:rgba(20,15,8,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px)}
+.book-header{position:absolute;top:0;left:0;right:0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;color:rgba(255,255,255,0.7)}
+.book-header-title{font-family:'Noto Serif SC',serif;font-size:15px;color:rgba(255,255,255,0.85)}
+.book-close{background:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;font-size:13px;font-family:'Noto Sans SC',sans-serif;transition:all 0.15s}
+.book-close:hover{background:rgba(255,255,255,0.1);color:#fff}
+.book-counter{font-size:13px;color:rgba(255,255,255,0.5)}
+
+/* 书本容器 */
+.book-scene{perspective:2000px;width:min(680px,90vw);height:min(480px,75vh)}
+.book{width:100%;height:100%;position:relative;transform-style:preserve-3d}
+
+/* 单页（左右两面） */
+.book-spread{position:absolute;inset:0;display:flex;border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+
+/* 左页（偶数面） */
+.page-left{flex:1;background:#fffdf6;border-right:2px solid #e8dcc8;position:relative;overflow:hidden;display:flex;flex-direction:column}
+/* 右页（奇数面） */
+.page-right{flex:1;background:#fffdf9;position:relative;overflow:hidden;display:flex;flex-direction:column}
+
+/* 书脊阴影 */
+.book-spine{position:absolute;left:50%;top:0;bottom:0;width:6px;transform:translateX(-50%);background:linear-gradient(to right,#d4c5a9,#f0e8d8,#d4c5a9);z-index:2;box-shadow:0 0 8px rgba(0,0,0,0.15)}
+
+/* 页面内容 */
+.page-content{flex:1;padding:32px 28px 20px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.page-img{width:100%;height:200px;object-fit:cover;border-radius:6px;margin-bottom:16px;flex-shrink:0}
+.page-img-ph{width:100%;height:160px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:6px;margin-bottom:16px;font-size:40px;flex-shrink:0}
+.page-date{font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:0.05em}
+.page-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+.page-text{font-size:13px;color:var(--text2);line-height:1.9;overflow:hidden;flex:1}
+.page-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.page-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.page-num{position:absolute;bottom:12px;font-size:11px;color:var(--text3);font-family:'Noto Serif SC',serif}
+.page-left .page-num{left:28px}
+.page-right .page-num{right:28px}
+
+/* 空页（封面/封底风格） */
+.page-cover{flex:1;background:linear-gradient(135deg,#3d2b1a,#6b4c2a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f0e0c0;gap:12px}
+.page-cover h2{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;letter-spacing:0.1em}
+.page-cover p{font-size:12px;opacity:0.6}
+.page-cover .cover-icon{font-size:48px}
+
+/* 翻页动画 */
+.page-turning{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transition:transform 0.65s cubic-bezier(0.645,0.045,0.355,1.000)}
+.page-turning.flipping-forward{animation:flipForward 0.65s cubic-bezier(0.645,0.045,0.355,1.000) forwards}
+.page-turning.flipping-back{animation:flipBack 0.65s cubic-bezier(0.645,0.045,0.355,1.000) forwards}
+@keyframes flipForward{
+  0%{transform:rotateY(0deg)}
+  100%{transform:rotateY(-180deg)}
+}
+@keyframes flipBack{
+  0%{transform:rotateY(-180deg)}
+  100%{transform:rotateY(0deg)}
+}
+
+/* 翻页按钮 */
+.book-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:20px 40px}
+.book-nav-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.15s;backdrop-filter:blur(4px)}
+.book-nav-btn:hover{background:rgba(255,255,255,0.22);color:#fff}
+.book-nav-btn:disabled{opacity:0.25;cursor:not-allowed}
+.book-page-dots{display:flex;gap:6px;align-items:center}
+.book-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);cursor:pointer;transition:all 0.15s}
+.book-dot.active{background:rgba(255,255,255,0.8);width:18px;border-radius:3px}
+
+/* 键盘提示 */
+.key-hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.3);white-space:nowrap}
+
+/* 加载 */
+.loading-overlay{position:fixed;inset:0;background:rgba(250,248,245,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:12px}
 .spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:14px;color:var(--text2)}
@@ -104,7 +175,11 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
   .header,.toolbar,.content{padding-left:16px;padding-right:16px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
   .card-img,.card-img-ph{height:130px}
-  .sync-status span{display:none}
+  .book-scene{width:95vw;height:72vh}
+  .page-content{padding:20px 16px 14px}
+  .page-img{height:140px}
+  .book-nav{padding:16px 20px}
+  .key-hint{display:none}
 }
 </style>
 </head>
@@ -128,8 +203,9 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
       <div class="sync-dot" id="syncDot"></div>
       <span id="syncText">未连接</span>
     </div>
-    <button class="btn" onclick="openPassphrase()" style="font-size:12px;padding:6px 12px">🔑 切换口令</button>
-    <button class="btn btn-primary" onclick="openNew()">＋ 新建记录</button>
+    <button class="btn" onclick="openPassphrase()" style="font-size:12px;padding:6px 10px">🔑 切换口令</button>
+    <button class="btn btn-book" onclick="openBook(0)" id="readBtn" style="display:none">📖 翻书阅读</button>
+    <button class="btn btn-primary" onclick="openNew()">＋ 新建</button>
   </div>
 </div>
 
@@ -144,12 +220,12 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
 <div class="content">
   <div id="emptyState" class="empty-state" style="display:none">
     <div class="empty-icon">🌿</div>
-    <p>还没有任何记录，点击「新建记录」开始你的第一篇日记吧</p>
+    <p>还没有任何记录，点击「新建」开始你的第一篇日记吧</p>
     <button class="btn btn-primary" onclick="openNew()">开始记录</button>
   </div>
   <div id="noResults" class="no-results" style="display:none">
-    <div class="empty-icon">🔍</div>
-    <p>没有找到匹配的记录</p>
+    <div class="empty-icon" style="font-size:40px;margin-bottom:12px">🔍</div>
+    <p style="font-size:14px;color:var(--text3)">没有找到匹配的记录</p>
   </div>
   <div id="grid" class="grid"></div>
 </div>
@@ -157,11 +233,9 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
 <!-- 口令弹窗 -->
 <div id="passphraseModal" class="overlay" style="display:none">
   <div class="modal passphrase-modal">
-    <div class="modal-header">
-      <h2>🔑 输入访问口令</h2>
-    </div>
+    <div class="modal-header"><h2>🔑 输入访问口令</h2></div>
     <div class="modal-body">
-      <p class="passphrase-desc">所有使用相同口令的设备将共享同一份日记数据。请在你的所有设备上输入同一个口令。</p>
+      <p class="passphrase-desc">所有使用相同口令的设备将共享同一份日记数据。</p>
       <div class="field">
         <label>口令（自己设定，记住就好）</label>
         <input type="text" id="passphraseInput" placeholder="例如：mysecretdiary2024" autocomplete="off">
@@ -206,156 +280,110 @@ mark.hl{background:rgba(196,151,62,0.25);border-radius:2px;color:inherit}
   </div>
 </div>
 
-<!-- 查看弹窗 -->
-<div id="viewModal" class="overlay" style="display:none" onclick="overlayClose(event,'viewModal')">
-  <div class="modal view-modal">
-    <div class="modal-header">
-      <div style="display:flex;gap:6px">
-        <button class="btn" onclick="editCurrent()" style="font-size:12px;padding:6px 12px">✏️ 编辑</button>
-        <button class="btn" onclick="deleteCurrent()" style="font-size:12px;padding:6px 12px;color:var(--danger)">🗑️ 删除</button>
-      </div>
-      <button class="icon-btn" onclick="closeModal('viewModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <img id="viewImg" class="view-img" style="display:none" alt="">
-      <div id="viewDate" class="view-date"></div>
-      <div id="viewTitle" class="view-title"></div>
-      <div id="viewText" class="view-text"></div>
-      <div id="viewTags" class="view-tags"></div>
+<!-- 翻书阅读模式 -->
+<div id="bookOverlay" class="book-overlay" style="display:none">
+  <div class="book-header">
+    <div class="book-header-title">📓 我的照片日记</div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="book-counter" id="bookCounter"></div>
+      <button class="book-close" onclick="closeBook()">✕ 关闭</button>
     </div>
   </div>
+
+  <div class="book-scene">
+    <div class="book" id="bookInner">
+      <div class="book-spread" id="bookSpread">
+        <div class="page-left" id="pageLeft"></div>
+        <div class="book-spine"></div>
+        <div class="page-right" id="pageRight"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="book-nav">
+    <button class="book-nav-btn" id="btnPrev" onclick="turnPage(-1)">‹</button>
+    <div class="book-page-dots" id="bookDots"></div>
+    <button class="book-nav-btn" id="btnNext" onclick="turnPage(1)">›</button>
+  </div>
+  <div class="key-hint">← → 键翻页 · 点击照片放大</div>
+</div>
+
+<!-- 图片放大 -->
+<div id="imgZoom" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:400;display:none;align-items:center;justify-content:center;cursor:zoom-out" onclick="this.style.display='none'">
+  <img id="imgZoomSrc" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px" alt="">
 </div>
 
 <script>
-// ===== Supabase 配置 =====
-const SUPABASE_URL = 'https://ypjyuuoddukuwcquqgny.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hRBNbp6yg2IDOcnDXh9tdw_foNAi3gZ';
-const TABLE = 'diary_entries';
+const SUPABASE_URL='https://ypjyuuoddukuwcquqgny.supabase.co';
+const SUPABASE_KEY='sb_publishable_hRBNbp6yg2IDOcnDXh9tdw_foNAi3gZ';
+const TABLE='diary_entries';
 
-// ===== 状态 =====
-let entries = [];
-let passphrase = '';
-let editId = null, viewId = null, imgData = null, activeTag = null;
+let entries=[],passphrase='',editId=null,viewId=null,imgData=null,activeTag=null;
+let bookPage=0,bookEntries=[],isTurning=false;
 
-// ===== Supabase API =====
-async function sbFetch(path, options = {}) {
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+// ===== SUPABASE =====
+async function sbFetch(path,options={}){
+  const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
     ...options,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
-      ...(options.headers || {})
-    }
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(options.headers||{})}
   });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err);
-  }
-  const text = await res.text();
-  return text ? JSON.parse(text) : [];
+  if(!res.ok){const e=await res.text();throw new Error(e);}
+  const t=await res.text();return t?JSON.parse(t):[];
+}
+async function loadFromCloud(){
+  setSyncStatus('loading','同步中…');
+  try{
+    const data=await sbFetch(TABLE+'?passphrase=eq.'+encodeURIComponent(passphrase)+'&order=date.desc');
+    entries=data.map(r=>({id:r.id,title:r.title||'',date:r.date||'',text:r.content||'',tags:r.tags||[],img:r.img||null}));
+    setSyncStatus('ok','已同步');render();
+  }catch(e){setSyncStatus('err','同步失败');console.error(e);}
+}
+async function upsertEntry(entry){
+  setSyncStatus('loading','保存中…');
+  try{
+    await sbFetch(TABLE,{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=representation'},
+      body:JSON.stringify({id:entry.id,passphrase,title:entry.title,date:entry.date,content:entry.text,tags:entry.tags,img:entry.img,updated_at:new Date().toISOString()})});
+    setSyncStatus('ok','已同步');
+  }catch(e){setSyncStatus('err','保存失败');console.error(e);}
+}
+async function deleteFromCloud(id){
+  try{await sbFetch(TABLE+'?id=eq.'+id+'&passphrase=eq.'+encodeURIComponent(passphrase),{method:'DELETE'});setSyncStatus('ok','已同步');}
+  catch(e){setSyncStatus('err','删除失败');}
 }
 
-async function loadFromCloud() {
-  setSyncStatus('loading', '同步中…');
-  try {
-    const data = await sbFetch(TABLE + '?passphrase=eq.' + encodeURIComponent(passphrase) + '&order=date.desc');
-    entries = data.map(r => ({
-      id: r.id,
-      title: r.title || '',
-      date: r.date || '',
-      text: r.content || '',
-      tags: r.tags || [],
-      img: r.img || null
-    }));
-    setSyncStatus('ok', '已同步');
-    render();
-  } catch(e) {
-    setSyncStatus('err', '同步失败');
-    console.error(e);
-  }
-}
+// ===== UI =====
+function setSyncStatus(s,t){document.getElementById('syncDot').className='sync-dot '+s;document.getElementById('syncText').textContent=t;}
+function today(){return new Date().toISOString().split('T')[0];}
+function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日';}
+function allTags(){const s=new Set();entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t)));return[...s];}
+function hl(t,q){if(!q||!t)return t||'';const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>');}
 
-async function upsertEntry(entry) {
-  setSyncStatus('loading', '保存中…');
-  try {
-    await sbFetch(TABLE, {
-      method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-      body: JSON.stringify({
-        id: entry.id,
-        passphrase: passphrase,
-        title: entry.title,
-        date: entry.date,
-        content: entry.text,
-        tags: entry.tags,
-        img: entry.img,
-        updated_at: new Date().toISOString()
-      })
-    });
-    setSyncStatus('ok', '已同步');
-  } catch(e) {
-    setSyncStatus('err', '保存失败');
-    console.error(e);
-  }
-}
-
-async function deleteFromCloud(id) {
-  setSyncStatus('loading', '删除中…');
-  try {
-    await sbFetch(TABLE + '?id=eq.' + id + '&passphrase=eq.' + encodeURIComponent(passphrase), {
-      method: 'DELETE'
-    });
-    setSyncStatus('ok', '已同步');
-  } catch(e) {
-    setSyncStatus('err', '删除失败');
-    console.error(e);
-  }
-}
-
-// ===== UI 工具 =====
-function setSyncStatus(state, text) {
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncText');
-  dot.className = 'sync-dot ' + state;
-  txt.textContent = text;
-}
-
-function today() { return new Date().toISOString().split('T')[0]; }
-function fmt(d) { if(!d) return ''; const p=d.split('-'); return p[0]+'年'+p[1]+'月'+p[2]+'日'; }
-function allTags() { const s=new Set(); entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t))); return[...s]; }
-function hl(t,q) { if(!q||!t)return t||''; const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>'); }
-
-function renderTagsFilter() {
-  const tags = allTags();
-  const w = document.getElementById('tagsFilter');
+function renderTagsFilter(){
+  const tags=allTags(),w=document.getElementById('tagsFilter');
   if(!tags.length){w.innerHTML='';return;}
-  w.innerHTML = `<button class="tag-btn ${!activeTag?'active':''}" onclick="setTag(null)">全部</button>` +
+  w.innerHTML=`<button class="tag-btn ${!activeTag?'active':''}" onclick="setTag(null)">全部</button>`+
     tags.map(t=>`<button class="tag-btn ${activeTag===t?'active':''}" onclick="setTag('${t.replace(/'/g,"\\'")}'">${t}</button>`).join('');
 }
 function setTag(t){activeTag=t;renderTagsFilter();filterRender();}
 
-function filterRender() {
-  const q = (document.getElementById('searchInput').value||'').trim().toLowerCase();
-  const sorted = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  const filtered = sorted.filter(e => {
-    if(activeTag && !(e.tags||[]).includes(activeTag)) return false;
-    if(!q) return true;
-    return (e.title||'').toLowerCase().includes(q)||(e.text||'').toLowerCase().includes(q)||(e.tags||[]).some(t=>t.toLowerCase().includes(q));
+function filterRender(){
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  const filtered=sorted.filter(e=>{
+    if(activeTag&&!(e.tags||[]).includes(activeTag))return false;
+    if(!q)return true;
+    return(e.title||'').toLowerCase().includes(q)||(e.text||'').toLowerCase().includes(q)||(e.tags||[]).some(t=>t.toLowerCase().includes(q));
   });
-  const grid=document.getElementById('grid');
-  const emp=document.getElementById('emptyState');
-  const nor=document.getElementById('noResults');
-  const sub=document.getElementById('subtitle');
+  const grid=document.getElementById('grid'),emp=document.getElementById('emptyState'),nor=document.getElementById('noResults'),sub=document.getElementById('subtitle');
   sub.textContent='共 '+entries.length+' 篇记录';
+  document.getElementById('readBtn').style.display=entries.length>0?'inline-flex':'none';
   if(entries.length===0){emp.style.display='block';nor.style.display='none';grid.innerHTML='';sub.textContent='暂无记录';return;}
   emp.style.display='none';
   if(filtered.length===0){nor.style.display='block';grid.innerHTML='';return;}
   nor.style.display='none';
   grid.innerHTML=filtered.map(e=>`
-    <div class="card" onclick="viewEntry('${e.id}')">
-      ${e.img?`<img class="card-img" src="${e.img}" alt="${(e.title||'').replace(/"/g,'&quot;')}">`:
+    <div class="card" onclick="openBook(${entries.indexOf(e)})">
+      ${e.img?`<img class="card-img" src="${e.img}" alt="">`:
       `<div class="card-img-ph">🖼️</div>`}
       <div class="card-body">
         <div class="card-date">${fmt(e.date)}</div>
@@ -371,22 +399,159 @@ function filterRender() {
 }
 function render(){renderTagsFilter();filterRender();}
 
-// ===== 口令 =====
-function openPassphrase() {
-  document.getElementById('passphraseInput').value = passphrase || '';
-  document.getElementById('passphraseModal').style.display = 'flex';
+// ===== 翻书模式 =====
+function openBook(startIdx){
+  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  bookEntries=sorted;
+  bookPage=Math.max(0,Math.min(startIdx,bookEntries.length-1));
+  document.getElementById('bookOverlay').style.display='flex';
+  document.body.style.overflow='hidden';
+  renderBook();
 }
-function confirmPassphrase() {
-  const val = document.getElementById('passphraseInput').value.trim();
+function closeBook(){
+  document.getElementById('bookOverlay').style.display='none';
+  document.body.style.overflow='';
+}
+
+function renderBook(){
+  const total=bookEntries.length;
+  const e=bookEntries[bookPage];
+
+  // 左页：封面或上一条
+  const left=document.getElementById('pageLeft');
+  const right=document.getElementById('pageRight');
+
+  // 左页内容
+  if(bookPage===0){
+    left.innerHTML=`<div class="page-cover">
+      <div class="cover-icon">📓</div>
+      <h2>我的照片日记</h2>
+      <p>共 ${total} 篇记录</p>
+    </div>`;
+  } else {
+    left.innerHTML=buildPageHTML(bookEntries[bookPage-1],bookPage);
+  }
+
+  // 右页内容（当前页）
+  right.innerHTML=buildPageHTML(e,bookPage+1);
+
+  // 绑定图片点击放大
+  right.querySelectorAll('.page-img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.onclick=()=>{
+      const z=document.getElementById('imgZoom');
+      document.getElementById('imgZoomSrc').src=img.src;
+      z.style.display='flex';
+    };
+  });
+  left.querySelectorAll('.page-img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.onclick=()=>{
+      const z=document.getElementById('imgZoom');
+      document.getElementById('imgZoomSrc').src=img.src;
+      z.style.display='flex';
+    };
+  });
+
+  // 计数器
+  document.getElementById('bookCounter').textContent=`${bookPage+1} / ${total}`;
+
+  // 按钮状态
+  document.getElementById('btnPrev').disabled=bookPage===0;
+  document.getElementById('btnNext').disabled=bookPage===total-1;
+
+  // 点点导航（最多显示9个）
+  const dots=document.getElementById('bookDots');
+  const maxDots=Math.min(total,9);
+  let start=Math.max(0,bookPage-Math.floor(maxDots/2));
+  start=Math.min(start,total-maxDots);
+  dots.innerHTML=Array.from({length:Math.min(total,maxDots)},(_,i)=>{
+    const idx=start+i;
+    return`<div class="book-dot ${idx===bookPage?'active':''}" onclick="jumpToPage(${idx})"></div>`;
+  }).join('');
+}
+
+function buildPageHTML(e,pageNum){
+  return`<div class="page-content">
+    ${e.img?`<img class="page-img" src="${e.img}" alt="${(e.title||'').replace(/"/g,'&quot;')}">`:
+    `<div class="page-img-ph">🖼️</div>`}
+    <div class="page-date">${fmt(e.date)}</div>
+    <div class="page-title">${e.title||'无标题'}</div>
+    <div class="page-text">${(e.text||'').replace(/\n/g,'<br>')}</div>
+    ${(e.tags||[]).length?`<div class="page-tags">${(e.tags||[]).map(t=>`<span class="page-tag">${t}</span>`).join('')}</div>`:''}
+    <div class="page-num">${pageNum}</div>
+  </div>`;
+}
+
+function turnPage(dir){
+  if(isTurning)return;
+  const newPage=bookPage+dir;
+  if(newPage<0||newPage>=bookEntries.length)return;
+  isTurning=true;
+
+  const spread=document.getElementById('bookSpread');
+  spread.style.transition='transform 0.1s';
+
+  // 简洁的滑动+缩放翻页感
+  const animOut=dir>0?'translateX(-3%) rotateY(-8deg)':'translateX(3%) rotateY(8deg)';
+  spread.style.transform=animOut;
+  spread.style.opacity='0.7';
+
+  setTimeout(()=>{
+    bookPage=newPage;
+    renderBook();
+    spread.style.transition='none';
+    const animIn=dir>0?'translateX(3%) rotateY(8deg)':'translateX(-3%) rotateY(-8deg)';
+    spread.style.transform=animIn;
+    spread.style.opacity='0.7';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        spread.style.transition='transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s';
+        spread.style.transform='translateX(0) rotateY(0)';
+        spread.style.opacity='1';
+        setTimeout(()=>{isTurning=false;},350);
+      });
+    });
+  },180);
+}
+
+function jumpToPage(idx){
+  if(idx===bookPage||isTurning)return;
+  const dir=idx>bookPage?1:-1;
+  bookPage=idx;
+  isTurning=true;
+  const spread=document.getElementById('bookSpread');
+  spread.style.transition='opacity 0.2s';
+  spread.style.opacity='0';
+  setTimeout(()=>{
+    renderBook();
+    spread.style.opacity='1';
+    setTimeout(()=>{isTurning=false;},200);
+  },200);
+}
+
+// 键盘翻页
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('bookOverlay').style.display==='none')return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')turnPage(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')turnPage(-1);
+  if(e.key==='Escape')closeBook();
+});
+
+// ===== 口令 =====
+function openPassphrase(){
+  document.getElementById('passphraseInput').value=passphrase||'';
+  document.getElementById('passphraseModal').style.display='flex';
+}
+function confirmPassphrase(){
+  const val=document.getElementById('passphraseInput').value.trim();
   if(!val){alert('请输入口令');return;}
-  passphrase = val;
-  localStorage.setItem('diary_passphrase', passphrase);
-  closeModal('passphraseModal');
-  loadFromCloud();
+  passphrase=val;localStorage.setItem('diary_passphrase',passphrase);
+  closeModal('passphraseModal');loadFromCloud();
 }
 
 // ===== 编辑 =====
-function openNew() {
+function openNew(){
   editId=null;imgData=null;
   document.getElementById('titleInput').value='';
   document.getElementById('dateInput').value=today();
@@ -399,7 +564,7 @@ function openNew() {
   document.getElementById('modalTitle').textContent='新建记录';
   document.getElementById('editModal').style.display='flex';
 }
-function editEntry(id) {
+function editEntry(id){
   const e=entries.find(x=>x.id===id);if(!e)return;
   editId=id;imgData=e.img||null;
   document.getElementById('titleInput').value=e.title||'';
@@ -413,12 +578,9 @@ function editEntry(id) {
   document.getElementById('editModal').style.display='flex';
 }
 function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value='';}
-function editCurrent(){closeModal('viewModal');editEntry(viewId);}
-function deleteCurrent(){deleteEntry(viewId);closeModal('viewModal');}
 async function deleteEntry(id){
   if(!confirm('确定删除这条记录吗？'))return;
-  entries=entries.filter(x=>x.id!==id);
-  render();
+  entries=entries.filter(x=>x.id!==id);render();
   await deleteFromCloud(id);
 }
 function handleImg(e){
@@ -440,30 +602,15 @@ async function saveEntry(){
   closeModal('editModal');render();
   await upsertEntry(entry);
 }
-function viewEntry(id){
-  const e=entries.find(x=>x.id===id);if(!e)return;
-  viewId=id;
-  document.getElementById('viewDate').textContent=fmt(e.date);
-  document.getElementById('viewTitle').textContent=e.title||'无标题';
-  document.getElementById('viewText').textContent=e.text||'';
-  const img=document.getElementById('viewImg');
-  if(e.img){img.src=e.img;img.style.display='block';}else img.style.display='none';
-  document.getElementById('viewTags').innerHTML=(e.tags||[]).map(t=>`<span class="view-tag">${t}</span>`).join('');
-  document.getElementById('viewModal').style.display='flex';
-}
 function closeModal(id){document.getElementById(id).style.display='none';}
 function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
 
 // ===== 启动 =====
 (async function init(){
-  const saved = localStorage.getItem('diary_passphrase');
+  const saved=localStorage.getItem('diary_passphrase');
   document.getElementById('loadingOverlay').style.display='none';
-  if(saved){
-    passphrase=saved;
-    await loadFromCloud();
-  } else {
-    openPassphrase();
-  }
+  if(saved){passphrase=saved;await loadFromCloud();}
+  else openPassphrase();
 })();
 </script>
 </body>
