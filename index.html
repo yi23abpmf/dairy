@@ -1,3 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我们的恋爱日记 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg: #fff5f6;          
+  --bg2: #ffe3e7;         
+  --card: #ffffff;        
+  --border: #ffd0d6;      
+  --border2: #ffb3be;     
+  --text: #4a3739;        
+  --text2: #85666a;       
+  --text3: #bfa1a4;       
+  --accent: #ff6b8b;      
+  --accent2: #ff94a2;     
+  --danger: #e04d4d;      
+  --shadow: 0 4px 16px rgba(255, 107, 139, 0.08);
+  --shadow2: 0 8px 32px rgba(255, 107, 139, 0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {width: 6px; height: 6px;}
+::-webkit-scrollbar-track {background: transparent;}
+::-webkit-scrollbar-thumb {background: var(--border2); border-radius: 10px;}
+::-webkit-scrollbar-thumb:hover {background: var(--accent);}
+
+/* HEADER */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(255,107,139,0.05)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{font-size:24px; filter: drop-shadow(0 2px 4px rgba(255,107,139,0.2))}
+.logo-text h1{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;letter-spacing:0.05em;color:var(--accent)}
+.logo-text p{font-size:11px;color:var(--text2);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:8px}
+.sync-status{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.sync-dot.ok{background:#5cb85c}.sync-dot.err{background:var(--danger)}.sync-dot.loading{background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;font-size:13px;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif;background:var(--card)}
+.btn:hover{background:var(--bg2);border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;font-weight:500;box-shadow: 0 2px 6px rgba(255,107,139,0.3)}
+.btn-primary:hover{background:#ff4d73;color:#fff}
+.btn-book{background:var(--accent2);color:#fff;border-color:transparent;font-weight:500;box-shadow: 0 2px 6px rgba(255,148,162,0.3)}
+.btn-book:hover{background:#ff7a8b;color:#fff}
+
+/* TOOLBAR */
+.toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--accent2);pointer-events:none;width:15px;height:15px}
+.search-wrap input{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;transition:all 0.15s}
+.search-wrap input:focus{outline:none;border-color:var(--accent);background:var(--card);box-shadow: 0 0 0 3px rgba(255,107,139,0.1)}
+.tags-filter{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag-btn{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg);color:var(--text2);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;font-family:'Noto Sans SC',sans-serif}
+.tag-btn.active{background:var(--accent);color:#fff;border-color:transparent;box-shadow: 0 2px 6px rgba(255,107,139,0.2)}
+.tag-btn:hover:not(.active){border-color:var(--accent);color:var(--accent);background:var(--bg2)}
+
+/* CONTENT */
+.content{padding:24px 28px;max-width:1000px;margin:0 auto}
+.empty-state{text-align:center;padding:80px 24px;color:var(--text3)}
+.empty-icon{font-size:52px;margin-bottom:16px;animation: heartBeat 2s infinite alternate}
+@keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+.empty-state p{font-family:'Noto Serif SC',serif;font-size:16px;margin-bottom:20px;color:var(--text2)}
+.no-results{text-align:center;padding:60px 24px;color:var(--text3)}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:var(--shadow)}
+.card:hover{border-color:var(--accent);box-shadow:var(--shadow2);transform:translateY(-4px)}
+.card-img{width:100%;height:180px;object-fit:cover;display:block}
+.card-img-ph{width:100%;height:180px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--accent2);font-size:36px}
+.card-body{padding:14px 16px 6px}
+.card-date{font-size:11px;color:var(--accent2);margin-bottom:6px;font-weight:500}
+.card-title{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.card-text{font-size:12px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:56px}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;padding:8px 16px 0}
+.card-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--accent);border:1px solid transparent}
+.card-footer{display:flex;justify-content:flex-end;gap:4px;padding:8px 12px 12px}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:6px 8px;border-radius:8px;display:inline-flex;align-items:center;transition:all 0.15s;font-size:14px}
+.icon-btn:hover{color:var(--accent);background:var(--bg2)}
+.icon-btn.danger:hover{color:var(--danger);background:#ffebeb}
+mark.hl{background:rgba(255,107,139,0.2);border-radius:2px;color:inherit;font-weight:500}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(74,55,57,0.35);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(4px)}
+.modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-header{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.modal-header h2{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:700;color:var(--accent)}
+.modal-body{padding:18px 20px 20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:600;letter-spacing:0.04em}
+.field input,.field textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;font-size:13px;background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;resize:vertical;transition:all 0.15s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:var(--card);box-shadow: 0 0 0 3px rgba(255,107,139,0.1)}
+.field textarea{min-height:120px;line-height:1.7}
+.upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:26px;text-align:center;cursor:pointer;transition:all 0.15s;position:relative;background:var(--bg)}
+.upload-area:hover{border-color:var(--accent);background:var(--bg2)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:28px;margin-bottom:8px}
+.upload-area p{font-size:12px;color:var(--text2)}
+.preview-wrap{position:relative;margin-bottom:12px}
+.preview-img{width:100%;max-height:190px;object-fit:contain;border-radius:var(--radius-sm);display:block;background:var(--bg)}
+.remove-img{position:absolute;top:6px;right:6px;background:rgba(255,107,139,0.8);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition: background 0.15s;}
+.remove-img:hover{background:var(--danger)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
+.compress-hint{font-size:11px;color:var(--accent);margin-top:4px;display:none}
+
+/* 口令弹窗 */
+.passphrase-modal{max-width:400px}
+.passphrase-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.passphrase-hint{font-size:11px;color:var(--text3);margin-top:8px}
+
+/* ===== 翻书阅读模式 ===== */
+.book-overlay{position:fixed;inset:0;background:rgba(42,30,32,0.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(6px)}
+.book-header{position:absolute;top:0;left:0;right:0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;color:rgba(255,255,255,0.85)}
+.book-header-title{font-family:'Noto Serif SC',serif;font-size:16px;color:#fff;font-weight:600}
+.book-close{background:none;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.8);border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;font-size:13px;font-family:'Noto Sans SC',sans-serif;transition:all 0.15s}
+.book-close:hover{background:var(--accent);border-color:transparent;color:#fff}
+.book-counter{font-size:13px;color:rgba(255,255,255,0.6)}
+
+/* 书本容器 */
+.book-scene{perspective:2000px;width:min(720px,92vw);height:min(520px,80vh)}
+.book{width:100%;height:100%;position:relative;transform-style:preserve-3d}
+
+/* 单页 */
+.book-spread{position:absolute;inset:0;display:flex;border-radius:12px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.4)}
+
+/* 左页与右页 */
+.page-left{flex:1;background:#fffcfc;border-right:1px solid #ffdcd0;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.page-right{flex:1;background:#ffffff;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.book-spine{position:absolute;left:50%;top:0;bottom:0;width:8px;transform:translateX(-50%);background:linear-gradient(to right,#ffebed,#fffbfb,#ffebed);z-index:2;box-shadow:0 0 10px rgba(255,107,139,0.15)}
+
+/* 页面内容 */
+.page-content{flex:1;padding:32px 28px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.page-img{width:100%;height:180px;object-fit:cover;border-radius:8px;margin-bottom:14px;flex-shrink:0;box-shadow: 0 2px 8px rgba(0,0,0,0.05)}
+.page-img-ph{width:100%;height:140px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:8px;margin-bottom:14px;font-size:40px;flex-shrink:0}
+.page-date{font-size:11px;color:var(--accent);margin-bottom:6px;letter-spacing:0.05em;font-weight:600}
+.page-title{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.4}
+
+/* 长文本滚动容器 */
+.page-body-scroll {flex:1; overflow-y:auto; padding-right:4px; margin-bottom:10px;}
+.page-text{font-size:13px;color:var(--text);line-height:1.8;word-break: break-all;}
+
+.page-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px solid var(--border);flex-shrink:0}
+.page-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--accent)}
+.page-num{position:absolute;bottom:12px;font-size:11px;color:var(--text3);font-family:'Noto Serif SC',serif}
+.page-left .page-num{left:28px}
+.page-right .page-num{right:28px}
+
+/* 封面 */
+.page-cover{flex:1;background:linear-gradient(135deg,#ff6b8b,#ffa4b4);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:12px}
+.page-cover h2{font-family:'Noto Serif SC',serif;font-size:22px;font-weight:700;letter-spacing:0.1em;text-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+.page-cover p{font-size:12px;opacity:0.9;background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:20px}
+.page-cover .cover-icon{font-size:52px;animation: heartBeat 1.5s infinite alternate}
+
+/* 翻页导航 */
+.book-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:20px 40px}
+.book-nav-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.15s;backdrop-filter:blur(4px)}
+.book-nav-btn:hover:not(:disabled){background:var(--accent);border-color:transparent;transform:scale(1.05)}
+.book-nav-btn:disabled{opacity:0.25;cursor:not-allowed}
+.book-page-dots{display:flex;gap:6px;align-items:center}
+.book-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);cursor:pointer;transition:all 0.15s}
+.book-dot.active{background:#fff;width:18px;border-radius:3px}
+
+.key-hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap}
+
+/* 加载遮罩 */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:12px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text2)}
+
+@media(max-width:600px){
+  .header,.toolbar,.content{padding-left:16px;padding-right:16px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card-img,.card-img-ph{height:130px}
+  .book-scene{width:95vw;height:75vh}
+  .page-content{padding:20px 14px}
+  .page-img{height:120px}
+  .book-nav{padding:16px 20px}
+  .key-hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 【核心修复：确保这个关键 id 的遮罩层在 HTML 结构中完好无损】 -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">正在翻开恋爱相册…</div>
+</div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">💖</div>
+    <div class="logo-text">
+      <h1>我们的恋爱日记</h1>
+      <p id="subtitle">暂无记录</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="sync-status">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncText">未连接</span>
+    </div>
+    <button class="btn" onclick="openPassphrase()" style="font-size:12px;padding:6px 10px">🔑 恋爱暗号</button>
+    <button class="btn btn-book" onclick="openBook(0)" id="readBtn" style="display:none">📖 翻开回忆</button>
+    <button class="btn btn-primary" onclick="openNew()">＋ 记一笔</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="寻找甜蜜瞬间（标题、内容、标签）…" oninput="filterRender()">
+  </div>
+  <div id="tagsFilter" class="tags-filter"></div>
+</div>
+
+<div class="content">
+  <div id="emptyState" class="empty-state" style="display:none">
+    <div class="empty-icon">✨</div>
+    <p>这里还空空的，快来记录你们的第一个心动瞬间吧~</p>
+    <button class="btn btn-primary" onclick="openNew()">开始记录</button>
+  </div>
+  <div id="noResults" class="no-results" style="display:none">
+    <div class="empty-icon" style="font-size:40px;margin-bottom:12px">🔍</div>
+    <p style="font-size:14px;color:var(--text3)">没有找到那段记忆呢</p>
+  </div>
+  <div id="grid" class="grid"></div>
+</div>
+
+<!-- 口令弹窗 -->
+<div id="passphraseModal" class="overlay" style="display:none">
+  <div class="modal passphrase-modal">
+    <div class="modal-header"><h2>🔑 输入专属恋爱暗号</h2></div>
+    <div class="modal-body">
+      <p class="passphrase-desc">输入两个人约定的秘密暗号，就能双向同步彼此写的日记哦。</p>
+      <div class="field">
+        <label>专属暗号</label>
+        <input type="text" id="passphraseInput" placeholder="例如：love2026 forever" autocomplete="off">
+        <p class="passphrase-hint">⚠️ 区分大小写，两台手机上输入完全一致即可同步</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="confirmPassphrase()">进入恋爱手帐</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑弹窗 -->
+<div id="editModal" class="overlay" style="display:none" onclick="overlayClose(event,'editModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">新建甜蜜记录</h2>
+      <button class="icon-btn" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>留存照片</label>
+        <div id="previewWrap" class="preview-wrap" style="display:none">
+          <img id="imgPreview" class="preview-img" alt="">
+          <button class="remove-img" onclick="removeImg()">✕</button>
+        </div>
+        <div id="uploadArea" class="upload-area">
+          <input type="file" accept="image/*" onchange="handleImg(event)" id="imgInput">
+          <div class="upload-icon">📸</div>
+          <p>点击或拖入今天拍的照片</p>
+        </div>
+        <div id="compressHint" class="compress-hint">⚡ 图片已自动智能压缩，节省云空间</div>
+      </div>
+      <div class="field"><label>记忆标题</label><input type="text" id="titleInput" placeholder="给这段美好回忆起个名字…"></div>
+      <div class="field"><label>纪念日期</label><input type="date" id="dateInput"></div>
+      <div class="field"><label>点滴记录（支持写长篇大论哦）</label><textarea id="textInput" placeholder="写下你们今天的心情、感动，或者对另一半想说的话…"></textarea></div>
+      <div class="field"><label>标签（用逗号分隔）</label><input type="text" id="tagsInput" placeholder="第一次约会, 纪念日, 异地恋, 美食…"></div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('editModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveEntry()">保存到云端</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 翻书阅读模式 -->
+<div id="bookOverlay" class="book-overlay" style="display:none">
+  <div class="book-header">
+    <div class="book-header-title">🌸 我们的时光相册</div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="book-counter" id="bookCounter"></div>
+      <button class="book-close" onclick="closeBook()">✕ 关闭</button>
+    </div>
+  </div>
+
+  <div class="book-scene">
+    <div class="book" id="bookInner">
+      <div class="book-spread" id="bookSpread">
+        <div class="page-left" id="pageLeft"></div>
+        <div class="book-spine"></div>
+        <div class="page-right" id="pageRight"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="book-nav">
+    <button class="book-nav-btn" id="btnPrev" onclick="turnPage(-1)">‹</button>
+    <div class="book-page-dots" id="bookDots"></div>
+    <button class="book-nav-btn" id="btnNext" onclick="turnPage(1)">›</button>
+  </div>
+  <div class="key-hint">← → 键翻页 · 点击照片放大 · 上下滚动阅读长文</div>
+</div>
+
+<!-- 图片放大 -->
+<div id="imgZoom" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:400;align-items:center;justify-content:center;cursor:zoom-out" onclick="this.style.display='none'">
+  <img id="imgZoomSrc" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:12px" alt="">
+</div>
+
 <script>
 const SUPABASE_URL='https://ypjyuuoddukuwcquqgny.supabase.co';
 const SUPABASE_KEY='sb_publishable_hRBNbp6yg2IDOcnDXh9tdw_foNAi3gZ';
@@ -43,7 +364,6 @@ function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'
 function allTags(){const s=new Set();entries.forEach(e=>(e.tags||[]).forEach(t=>t&&s.add(t)));return[...s];}
 function hl(t,q){if(!q||!t)return t||'';const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+e+')','gi'),'<mark class="hl">$1</mark>');}
 
-// 【修复：重构标签动态渲染逻辑，彻底避开拼接引号引发的语法中断】
 function renderTagsFilter(){
   const tags=allTags(),w=document.getElementById('tagsFilter');
   if(!tags.length){w.innerHTML='';return;}
@@ -328,3 +648,5 @@ function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal
   else openPassphrase();
 })();
 </script>
+</body>
+</html>
