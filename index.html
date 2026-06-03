@@ -63,29 +63,26 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .shelf-title span{font-size:12px;font-weight:400;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:12px}
 
 /* 书架网格 */
-.grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:35px 24px;padding-bottom:12px;border-bottom: 6px solid #f9d2d7;box-shadow: 0 10px 10px -8px rgba(255,107,139,0.12);border-radius: 4px;}
+.grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:40px 24px;padding-bottom:16px;border-bottom: 6px solid #f9d2d7;box-shadow: 0 10px 10px -8px rgba(255,107,139,0.12);border-radius: 4px;}
 
-/* 【核心更新】优化精致的 3D 紧凑书本模型，移除下方刺眼的白尾巴 */
-.book-container {perspective: 1000px;width: 140px;margin: 0 auto;cursor: pointer;}
+/* 优化极致精简的 3D 紧凑外壳 */
+.book-container {perspective: 1000px;width: 140px;height: 180px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
-  width: 100%;height: 175px;position: relative;transform-style: preserve-3d;
+  width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
   transform: rotateY(-12deg) translateZ(0);transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .book-container:hover .book-3d {
   transform: rotateY(-24deg) rotateX(4deg) translateZ(10px);
 }
 
-/* 统一厚度面 */
-.b-face {position: absolute;height: 100%;border-radius: 3px 6px 6px 3px;}
+.b-face {position: absolute;height: 100%;border-radius: 4px 8px 8px 4px;}
 
-/* 真正的一一对应照片封面层 */
+/* 专属独立照片封面层，带优雅卡片微立体阴影 */
 .b-cover {
-  width: 100%;transform: translateZ(6px);z-index: 5;
+  width: 100%;transform: translateZ(2px);z-index: 5;
   display: flex;flex-direction: column;justify-content: space-between;
   padding: 12px 10px;color: #fff;overflow: hidden;position: relative;
-  border: 1px solid var(--border);
-  /* 使用自然的底部阴影代替多余的白色大堆栈 */
-  box-shadow: 4px 6px 14px rgba(44,36,37,0.15), inset -2px 0 4px rgba(0,0,0,0.06);
+  box-shadow: 4px 6px 14px rgba(44,36,37,0.15);
 }
 .b-cover-img-bg {
   position: absolute;inset: 0;width: 100%;height: 100%;object-fit: cover;
@@ -97,10 +94,9 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .book-container:nth-child(2n) .b-cover.no-photo-bg { background: linear-gradient(135deg, #ff7e67, #ffb3a7); }
 .book-container:nth-child(3n) .b-cover.no-photo-bg { background: linear-gradient(135deg, #b388ff, #ea80fc); }
 
-/* 书本核心文本排版 */
 .b-cover-content { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; text-shadow: 0 1.5px 4px rgba(0,0,0,0.65); }
 
-/* 【核心更新】合集标志挂件，完美移到了小书的顶部最显眼处 */
+/* 精致书架挂件挂在顶部 */
 .b-cover-tag-badge {
   align-self: flex-start; font-size: 10px; font-weight: 500;
   background: rgba(255, 255, 255, 0.28); backdrop-filter: blur(5px); 
@@ -110,16 +106,26 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .b-cover-title {font-family:'Noto Serif SC',serif;font-size:13.5px;font-weight:700;line-height:1.4;word-break:break-all;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;}
 .b-cover-footer {font-size:10px;opacity:0.9;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.25);padding-top:5px;margin-top:auto;}
 
-/* 精致书脊 */
-.b-spine { width: 12px; left: -6px; transform: rotateY(-90deg) translateZ(0); background: #e05372; z-index: 4; filter: brightness(0.9); }
-/* 极小化堆叠底面，剔除突兀的超长白区域 */
-.b-page-stack { width: 100%; background: #fffcf5; border: 1px solid #dfd8cb; transform: translateZ(0); z-index: 3; }
+/* 【核心清障】移除原本冗长的多余白纸堆和厚度面，防止生成突兀大空白尾巴 */
+.b-spine { width: 8px; left: -4px; transform: rotateY(-90deg) translateZ(0); background: #e05372; z-index: 4; }
+.b-page-stack { width: 100%; background: #fffcf5; transform: translateZ(-2px); z-index: 3; }
 
-/* 紧凑操作区域 */
-.book-actions {display:flex;justify-content:center;gap:10px;margin-top:10px;opacity:0.6;transition:all 0.2s;}
-.book-container:hover .book-actions {opacity:1;}
-.action-btn-sm {background:none;border:none;cursor:pointer;font-size:11.5px;padding:2px 5px;border-radius:4px;color:var(--text2);}
-.action-btn-sm:hover {background:var(--bg2);color:var(--accent)}
+/* 【核心重构方案】剔除原本下方的大淡黄色拖尾容器，改为优雅的卡片悬浮内嵌小气泡按钮 */
+.book-actions {
+  position: absolute; bottom: 8px; right: 8px; z-index: 15;
+  display: flex; gap: 4px; opacity: 0; transform: translateY(4px);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.book-container:hover .book-actions { opacity: 1; transform: translateY(0); }
+
+.action-btn-sm {
+  background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,107,139,0.2); cursor: pointer; font-size: 11px;
+  padding: 3px 7px; border-radius: 6px; color: var(--text); font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: all 0.15s;
+}
+.action-btn-sm:hover { background: var(--accent); color: #fff; border-color: transparent; }
+.action-btn-sm.btn-del:hover { background: var(--danger); color: #fff; }
 
 /* 空状态 */
 .empty-state{text-align:center;padding:100px 24px;color:var(--text3);max-width:600px;margin:0 auto;}
@@ -429,10 +435,10 @@ function renderShelf(){
       bookContainer.className='book-container';
       bookContainer.onclick=()=>openBook3D(categoryName, categoryList, idx);
 
-      // 【精准解耦核心更新】读取 entry.img (即每本书独立的图)，彻底杜绝封面图重复错误
       const coverImgSrc = entry.img ? entry.img : null;
       const cleanTagName = categoryName.replace('📂 ', '').replace(' 合集', '');
 
+      // 【核心更新】剔除了原本大面积占位的黄纸片DOM结构，改成优雅干净的 3D 照片挂件模式
       bookContainer.innerHTML = `
         <div class="book-3d">
           <div class="b-face b-cover ${coverImgSrc ? '' : 'no-photo-bg'}">
@@ -449,9 +455,10 @@ function renderShelf(){
           <div class="b-face b-spine"></div>
           <div class="b-face b-page-stack"></div>
         </div>
+        <!-- 按钮改造成小巧优雅的悬浮气泡按钮，彻底抹杀照片下方的突兀死白区域 -->
         <div class="book-actions">
           <button class="action-btn-sm" onclick="event.stopPropagation();editEntry('${entry.id}')">✏️ 改写</button>
-          <button class="action-btn-sm" style="color:var(--danger)" onclick="event.stopPropagation();deleteEntry('${entry.id}')">🗑️ 抹去</button>
+          <button class="action-btn-sm btn-del" onclick="event.stopPropagation();deleteEntry('${entry.id}')">🗑️ 抹去</button>
         </div>
       `;
       gridBooks.appendChild(bookContainer);
@@ -462,7 +469,7 @@ function renderShelf(){
   });
 }
 
-// ===== 物理双面硬叶纸张流构建器 =====
+// ===== 物理双面硬页纸张流构建器 =====
 function openBook3D(title, list, startIdx){
   if(!list || list.length === 0) return;
   
@@ -601,6 +608,7 @@ function updatePagesVisualStatus(){
   document.getElementById('btnNext3D').disabled = currentFlipIndex === pages.length - 1;
 }
 
+// 物理翻转
 function turnPage3D(dir){
   const bookEl=document.getElementById('realBookElement');
   const pages=bookEl.querySelectorAll('.paper-page');
