@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><link rel="icon" href="https://fav.farm/💖">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我们的恋爱时光书架 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- 顺手帮你把这个 404 图标报错给消灭掉，换成小爱心 -->
+<link rel="icon" href="https://fav.farm/💖">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -80,7 +82,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   width: 100%;background: linear-gradient(135deg, var(--accent), var(--accent2));
   transform: translateZ(10px);z-index: 5;display: flex;flex-direction: column;justify-content: space-between;padding: 16px 12px;color: #fff;
 }
-/* 各种不同颜色合集风格 */
 .book-container:nth-child(2n) .b-cover { background: linear-gradient(135deg, #ff7e67, #ffb3a7); }
 .book-container:nth-child(3n) .b-cover { background: linear-gradient(135deg, #b388ff, #ea80fc); }
 .book-container:nth-child(4n) .b-cover { background: linear-gradient(135deg, #4ffcbd, #64ffda); color: #2a5a4a;}
@@ -93,7 +94,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   width: 20px;left: -10px;transform: rotateY(-90deg) translateZ(0);
   background: inherit;filter: brightness(0.85);z-index: 4;
 }
-/* 书底（厚度感觉） */
+/* 书底 */
 .b-page-stack {
   width: 100%;background: #fffbf0;border: 1px solid #e0d9cb;
   transform: translateZ(0);z-index: 3;box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
@@ -106,9 +107,10 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .action-btn-sm:hover {background:var(--bg2);color:var(--accent)}
 
 /* 空状态 */
-.empty-state{text-align:center;padding:100px 24px;color:var(--text3)}
+.empty-state{text-align:center;padding:100px 24px;color:var(--text3);max-width:600px;margin:0 auto;}
 .empty-icon{font-size:60px;margin-bottom:16px;animation: heartBeat 2s infinite alternate}
 @keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+.empty-state p{font-size:15px;color:var(--text2);margin-bottom:24px;}
 
 /* ===== 沉浸式实体 3D 翻书组件 ===== */
 .book-overlay{position:fixed;inset:0;background:rgba(42,30,32,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(8px)}
@@ -124,10 +126,8 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 }
 .real-book {
   width: 50%;height: 100%;position: relative;transform-style: preserve-3d;
-  /* 让整本书居中对齐旋转轴 */
   transform: translateX(50%);transition: transform 0.5s ease;
 }
-/* 当书打开到后面的页数时，整本书居中 */
 .real-book.is-opened { transform: translateX(0); }
 
 /* 物理双面硬页 */
@@ -151,7 +151,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   border-right: 1px solid #ffdcd0;
 }
 
-/* 翻过去的状态 */
 .paper-page.flipped { transform: rotateY(-180deg); }
 
 /* 书内页图文版面 */
@@ -171,7 +170,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .face-front .p-num {right:24px}
 .face-back .p-num {left:24px}
 
-/* 书本硬封皮风格（首页专用） */
+/* 书本硬封皮风格 */
 .p-cover-front {background: linear-gradient(135deg,#ff6b8b,#ffa4b4);color:#fff;align-items:center;justify-content:center;text-align:center;gap:14px;box-shadow: inset 4px 0 10px rgba(0,0,0,0.15);}
 .p-cover-front h2{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;letter-spacing:0.05em;text-shadow:0 2px 4px rgba(0,0,0,0.1)}
 .p-cover-front p{font-size:12px;opacity:0.9;background:rgba(255,255,255,0.25);padding:3px 12px;border-radius:20px}
@@ -208,11 +207,11 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:12px}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-</script>
+</style>
 </head>
 <body>
 
-<div id="loadingOverlay" class="loading-overlay">
+<div id="loadingOverlay" class="loading-overlay" style="display:none">
   <div class="spinner"></div>
   <div style="font-size:14px;color:var(--text2)">正在整理恋爱时光书架…</div>
 </div>
@@ -243,20 +242,24 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   <div style="font-size:12px;color:var(--text2)">✨ 提示：点击书架上的小书即可沉浸式翻阅</div>
 </div>
 
-<div class="content" id="shelfShelves">
+<!-- 主内容挂载区 -->
+<div class="content" id="shelfMainArea">
+  <div id="shelfShelves"></div>
+  
+  <!-- 把空状态移到主内容区内部，确保逻辑判断能够正常操作显示 -->
+  <div id="emptyState" class="empty-state" style="display:none">
+    <div class="empty-icon">💝</div>
+    <p>书架上空空的，快来输入“恋爱暗号”同步，或者记录你们的第一个瞬间吧~</p>
+    <button class="btn btn-primary" onclick="openNew()">开始记录第一笔</button>
   </div>
-
-<div id="emptyState" class="empty-state" style="display:none">
-  <div class="empty-icon">💝</div>
-  <p>书架上空空的，快来记录属于你们的第一个瞬间吧~</p>
-  <button class="btn btn-primary" onclick="openNew()">开始记录</button>
 </div>
 
+<!-- 暗号弹窗 -->
 <div id="passphraseModal" class="overlay" style="display:none">
   <div class="modal passphrase-modal">
     <div class="modal-header"><h2>🔑 输入专属恋爱暗号</h2></div>
     <div class="modal-body">
-      <p class="passphrase-desc">设定一个两人共同已知的口令暗号（如 love2026），多端实时同步。</p>
+      <p class="passphrase-desc">输入两个人的秘密口令（例如 love2026），就能跨设备同步你们的所有专属手帐了。</p>
       <div class="field">
         <label>专属暗号</label>
         <input type="text" id="passphraseInput" placeholder="请输入约定的恋爱暗号" autocomplete="off">
@@ -268,6 +271,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
+<!-- 编辑弹窗 -->
 <div id="editModal" class="overlay" style="display:none" onclick="overlayClose(event,'editModal')">
   <div class="modal">
     <div class="modal-header">
@@ -300,6 +304,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
+<!-- 沉浸式硬核 3D 纸张物理翻书大窗 -->
 <div id="bookOverlay" class="book-overlay" style="display:none">
   <div class="book-header">
     <div class="book-header-title" id="bookActiveShelfTitle">🌸 某某合集</div>
@@ -310,8 +315,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 
   <div class="book-scene3d">
-    <div class="real-book" id="realBookElement">
-      </div>
+    <div class="real-book" id="realBookElement"></div>
   </div>
 
   <div class="book-nav">
@@ -321,6 +325,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
+<!-- 图片放大 -->
 <div id="imgZoom" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:400;align-items:center;justify-content:center;cursor:zoom-out" onclick="this.style.display='none'">
   <img id="imgZoomSrc" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:12px">
 </div>
@@ -342,13 +347,28 @@ async function sbFetch(path,options={}){
   if(!res.ok){const e=await res.text();throw new Error(e);}
   const t=await res.text();return t?JSON.parse(t):[];
 }
+
+function showLoading(msg){
+  const el = document.getElementById('loadingOverlay');
+  if(el){ el.querySelector('div:last-child').textContent=msg; el.style.display='flex'; }
+}
+function hideLoading(){
+  const el = document.getElementById('loadingOverlay');
+  if(el){ el.style.display='none'; }
+}
+
 async function loadFromCloud(){
-  setSyncStatus('loading','搬运时光中…');
+  showLoading('正在开启专属回忆仓库…');
   try{
     const data=await sbFetch(TABLE+'?passphrase=eq.'+encodeURIComponent(passphrase)+'&order=date.desc');
     entries=data.map(r=>({id:r.id,title:r.title||'',date:r.date||'',text:r.content||'',tags:r.tags||[],img:r.img||null}));
-    setSyncStatus('ok','已甜美同步');renderShelf();
-  }catch(e){setSyncStatus('err','同步失败');console.error(e);}
+    setSyncStatus('ok','已甜美同步');
+    renderShelf();
+  }catch(e){
+    setSyncStatus('err','同步失败');console.error(e);
+  }finally{
+    hideLoading();
+  }
 }
 async function upsertEntry(entry){
   setSyncStatus('loading','保存记忆中…');
@@ -368,24 +388,27 @@ function setSyncStatus(s,t){document.getElementById('syncDot').className='sync-d
 function today(){return new Date().toISOString().split('T')[0];}
 function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日';}
 
-// ===== 书架合集算法中心 =====
+// ===== 【核心修复】书架防白屏无数据安全渲染算法 =====
 function renderShelf(){
-  const searchQ=document.getElementById('searchInput').value.trim().toLowerCase();
+  const searchQ=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   const shelfContainer=document.getElementById('shelfShelves');
   const emptyState=document.getElementById('emptyState');
   const subtitle=document.getElementById('subtitle');
   
   shelfContainer.innerHTML='';
-  if(entries.length===0){emptyState.style.display='block';subtitle.textContent='还没有小书呢';return;}
+  
+  // 如果数据库一条记录都没有，直接拉起空状态保护，防止后续 3D 书本渲染报错崩掉
+  if(entries.length===0){
+    emptyState.style.display='block';
+    subtitle.textContent='还没有手帐记录';
+    return;
+  }
   emptyState.style.display='none';
   subtitle.textContent=`共藏有 ${entries.length} 个瞬间`;
 
-  // 1. 先过滤搜索关键词
   const filteredEntries=entries.filter(e=>(e.title+e.text+e.tags.join(',')).toLowerCase().includes(searchQ));
 
-  // 2. 按标签聚类（分合集）
   const categoryMap={};
-  // 独立出一个“全集手帐”分类
   categoryMap['💖 全部时光手帐']=[...filteredEntries];
 
   filteredEntries.forEach(entry=>{
@@ -399,7 +422,6 @@ function renderShelf(){
     }
   });
 
-  // 3. 开始搭建排布精美书架
   Object.keys(categoryMap).forEach(categoryName=>{
     const categoryList=categoryMap[categoryName].sort((a,b)=>b.date.localeCompare(a.date));
     if(categoryList.length===0) return;
@@ -414,7 +436,6 @@ function renderShelf(){
     categoryList.forEach((entry, idx)=>{
       const bookContainer=document.createElement('div');
       bookContainer.className='book-container';
-      // 这里的交互直接点进该本书所在的完整合集阅读，且定位到此页
       bookContainer.onclick=()=>openBook3D(categoryName, categoryList, idx);
 
       bookContainer.innerHTML=`
@@ -442,8 +463,9 @@ function renderShelf(){
   });
 }
 
-// ===== 核心 3D 实体物理翻书核心算法 =====
+// ===== 3D 实体物理翻书组件 =====
 function openBook3D(title, list, startIdx){
+  if(!list || list.length === 0) return;
   currentBookPagesData=list;
   document.getElementById('bookActiveShelfTitle').textContent=title;
   
@@ -451,8 +473,7 @@ function openBook3D(title, list, startIdx){
   bookEl.innerHTML='';
   bookEl.classList.remove('is-opened');
 
-  // 构建真正的折叠物理双面 DOM
-  // 第一页：精美硬封皮
+  // 第一页：硬封皮
   const coverPage=document.createElement('div');
   coverPage.className='paper-page';
   coverPage.innerHTML=`
@@ -460,19 +481,18 @@ function openBook3D(title, list, startIdx){
       <div class="c-icon">🌸</div>
       <h2>${title}</h2>
       <p>珍藏了 ${list.length} 个瞬间</p>
-      <div style="font-size:11px; opacity:0.7; margin-top:20px;">点击右侧边缘或点击按钮翻开</div>
+      <div style="font-size:11px; opacity:0.7; margin-top:20px;">点击右侧边缘或按键盘右箭头翻开</div>
     </div>
     <div class="page-face face-back"><div class="p-inner"></div></div>
   `;
   bookEl.appendChild(coverPage);
 
-  // 随后两两打包成一张物理纸张（包含Back反面和Front正面）
+  // 完美循环组装物理页面
   for(let i=0; i<list.length; i++){
     const entry=list[i];
     const pageNode=document.createElement('div');
     pageNode.className='paper-page';
 
-    // 每一张物理硬纸包含：[上一页的反面] 和 [本页的正面]
     pageNode.innerHTML=`
       <div class="page-face face-front">
         <div class="p-inner">
@@ -496,11 +516,10 @@ function openBook3D(title, list, startIdx){
     bookEl.appendChild(pageNode);
   }
 
-  // 物理页绑定边缘点击翻页交互
+  // 物理纸张左右半边点击判断翻页
   const allPages=bookEl.querySelectorAll('.paper-page');
   allPages.forEach((page, pIdx)=>{
     page.onclick=(evt)=>{
-      // 如果点击右侧大体范围，往前翻；点击左侧往回翻
       const rect = page.getBoundingClientRect();
       const clickX = evt.clientX - rect.left;
       if(clickX > rect.width / 2){
@@ -511,27 +530,25 @@ function openBook3D(title, list, startIdx){
     };
   });
 
-  // 默认直接定位计算展开
   document.getElementById('bookOverlay').style.display='flex';
   document.body.style.overflow='hidden';
 
-  // 计算初始页码定位（考虑封面，startIdx+1）
   currentFlipIndex=0;
   updatePagesVisualStatus();
   
-  // 自动翻页切到用户点击的那本书对应页面
   if(startIdx >= 0){
     setTimeout(()=>{
       for(let k=0; k<=startIdx; k++){
          turnPage3D(1);
       }
-    },300);
+    },250);
   }
 }
 
 function updatePagesVisualStatus(){
   const bookEl=document.getElementById('realBookElement');
   const pages=bookEl.querySelectorAll('.paper-page');
+  if(!pages.length) return;
   
   if(currentFlipIndex > 0){
     bookEl.classList.add('is-opened');
@@ -540,7 +557,6 @@ function updatePagesVisualStatus(){
   }
 
   pages.forEach((page, idx)=>{
-    // 控制 Z-index 层叠顺序，防止翻页时穿模
     if(idx < currentFlipIndex){
       page.classList.add('flipped');
       page.style.zIndex = 10 + idx;
@@ -549,7 +565,6 @@ function updatePagesVisualStatus(){
       page.style.zIndex = 100 - idx;
     }
     
-    // 只有当前页面顶层的这一张纸允许接收边缘点击
     if(idx === currentFlipIndex || idx === currentFlipIndex - 1){
       page.classList.add('active-flip');
     } else {
@@ -557,17 +572,15 @@ function updatePagesVisualStatus(){
     }
   });
 
-  // 绑定图片放大
   bookEl.querySelectorAll('.p-img').forEach(img=>{
      img.style.cursor='zoom-in';
      img.onclick=(e)=>{
-       e.stopPropagation(); // 阻止触发物理翻页
+       e.stopPropagation();
        document.getElementById('imgZoomSrc').src=img.src;
        document.getElementById('imgZoom').style.display='flex';
      };
   });
 
-  // 更新计算器
   document.getElementById('bookPageCounter3D').textContent = `${currentFlipIndex} / ${pages.length - 1}`;
   document.getElementById('btnPrev3D').disabled = currentFlipIndex === 0;
   document.getElementById('btnNext3D').disabled = currentFlipIndex === pages.length - 1;
@@ -588,7 +601,6 @@ function closeBook(){
   document.body.style.overflow='';
 }
 
-// 键盘映射
 document.addEventListener('keydown',e=>{
   if(document.getElementById('bookOverlay').style.display==='none')return;
   if(e.key==='ArrowRight') turnPage3D(1);
@@ -596,7 +608,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeBook();
 });
 
-// ===== EDIT & CODE LOGIC =====
+// ===== EDIT AREAS =====
 function openPassphrase(){
   document.getElementById('passphraseInput').value=passphrase||'';
   document.getElementById('passphraseModal').style.display='flex';
@@ -605,7 +617,8 @@ function confirmPassphrase(){
   const val=document.getElementById('passphraseInput').value.trim();
   if(!val){alert('请输入恋爱暗号哦');return;}
   passphrase=val;localStorage.setItem('diary_passphrase',passphrase);
-  closeModal('passphraseModal');loadFromCloud();
+  closeModal('passphraseModal');
+  loadFromCloud();
 }
 function openNew(){
   editId=null;imgData=null;
@@ -616,6 +629,7 @@ function openNew(){
   document.getElementById('imgPreview').src='';
   document.getElementById('previewWrap').style.display='none';
   document.getElementById('uploadArea').style.display='block';
+  document.getElementById('imgInput').value='';
   document.getElementById('compressHint').style.display='none';
   document.getElementById('modalTitle').textContent='记录新的甜蜜瞬间';
   document.getElementById('editModal').style.display='flex';
@@ -633,7 +647,7 @@ function editEntry(id){
   document.getElementById('modalTitle').textContent='重写这段时光';
   document.getElementById('editModal').style.display='flex';
 }
-function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('compressHint').style.display='none';}
+function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value='';document.getElementById('compressHint').style.display='none';}
 
 async function deleteEntry(id){
   if(!confirm('确定要从这个世界上抹去这段甜蜜回忆吗？'))return;
@@ -670,7 +684,6 @@ async function saveEntry(){
   const date=document.getElementById('dateInput').value||today();
   const text=document.getElementById('textInput').value.trim();
   const tagsRaw=document.getElementById('tagsInput').value.trim();
-  // 完美包容中文和英文逗号切分标签
   const tags=tagsRaw?tagsRaw.replace(/，/g,',').split(',').map(t=>t.trim()).filter(Boolean):[];
   
   if(!title&&!imgData&&!text){alert('不能保存完全空白的内容哦~');return;}
@@ -679,7 +692,8 @@ async function saveEntry(){
   if(editId){const i=entries.findIndex(x=>x.id===editId);if(i>=0)entries[i]=entry;}
   else entries.unshift(entry);
   
-  closeModal('editModal');renderShelf();
+  closeModal('editModal');
+  renderShelf();
   await upsertEntry(entry);
 }
 function closeModal(id){document.getElementById(id).style.display='none';}
@@ -688,9 +702,13 @@ function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal
 // ===== 启动生命周期 =====
 (async function init(){
   const saved=localStorage.getItem('diary_passphrase');
-  document.getElementById('loadingOverlay').style.display='none';
-  if(saved){passphrase=saved;await loadFromCloud();}
-  else openPassphrase();
+  hideLoading(); // 强制关闭静态默认遮罩
+  if(saved){
+    passphrase=saved;
+    await loadFromCloud();
+  } else {
+    openPassphrase();
+  }
 })();
 </script>
 </body>
