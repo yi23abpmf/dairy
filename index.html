@@ -63,63 +63,78 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .shelf-title span{font-size:12px;font-weight:400;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:12px}
 
 /* 书架网格 */
-.grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:40px 24px;padding-bottom:16px;border-bottom: 6px solid #f9d2d7;box-shadow: 0 10px 10px -8px rgba(255,107,139,0.12);border-radius: 4px;}
+.grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:25px 24px;padding-bottom:16px;border-bottom: 6px solid #f9d2d7;box-shadow: 0 10px 10px -8px rgba(255,107,139,0.12);border-radius: 4px;}
 
-/* 优化极致精简的 3D 紧凑外壳 */
-.book-container {perspective: 1000px;width: 140px;height: 180px;margin: 0 auto;cursor: pointer;position: relative;}
+/* 【核心更新】缩短整体容器高度，剔除下半部分无用的超长留白 */
+.book-container {perspective: 1000px;width: 140px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
-  width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
+  width: 100%;height: 245px;position: relative;transform-style: preserve-3d;
   transform: rotateY(-12deg) translateZ(0);transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .book-container:hover .book-3d {
   transform: rotateY(-24deg) rotateX(4deg) translateZ(10px);
 }
 
-.b-face {position: absolute;height: 100%;border-radius: 4px 8px 8px 4px;}
+.b-face {position: absolute;border-radius: 4px 8px 8px 4px;}
 
-/* 专属独立照片封面层，带优雅卡片微立体阴影 */
-.b-cover {
-  width: 100%;transform: translateZ(2px);z-index: 5;
-  display: flex;flex-direction: column;justify-content: space-between;
-  padding: 12px 10px;color: #fff;overflow: hidden;position: relative;
-  box-shadow: 4px 6px 14px rgba(44,36,37,0.15);
+/* 上半部分：封面的独立照片容器 */
+.b-cover-top {
+  position: absolute;top: 0;left: 0;width: 100%;height: 165px;
+  z-index: 5;overflow: hidden;border-radius: 4px 8px 0 0;
+  box-shadow: 4px 2px 10px rgba(44,36,37,0.1);
+  transform: translateZ(2px);
 }
 .b-cover-img-bg {
-  position: absolute;inset: 0;width: 100%;height: 100%;object-fit: cover;
-  z-index: 1;filter: brightness(0.72) contrast(0.98);transition: transform 0.4s;
+  width: 100%;height: 100%;object-fit: cover;
+  filter: brightness(0.85) contrast(0.98);transition: transform 0.4s;
 }
 .book-container:hover .b-cover-img-bg { transform: scale(1.06); }
+.b-cover-top.no-photo-bg { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
 
-.b-cover.no-photo-bg { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
-.book-container:nth-child(2n) .b-cover.no-photo-bg { background: linear-gradient(135deg, #ff7e67, #ffb3a7); }
-.book-container:nth-child(3n) .b-cover.no-photo-bg { background: linear-gradient(135deg, #b388ff, #ea80fc); }
-
-.b-cover-content { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; text-shadow: 0 1.5px 4px rgba(0,0,0,0.65); }
-
-/* 精致书架挂件挂在顶部 */
+/* 在照片图层上方悬浮合集挂件 */
 .b-cover-tag-badge {
-  align-self: flex-start; font-size: 10px; font-weight: 500;
-  background: rgba(255, 255, 255, 0.28); backdrop-filter: blur(5px); 
-  padding: 2px 7px; border-radius: 4px; border: 0.5px solid rgba(255,255,255,0.2);
-  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  position: absolute; top: 10px; left: 10px; z-index: 6;
+  font-size: 10px; font-weight: 500; color: #fff;
+  background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); 
+  padding: 2px 6px; border-radius: 4px; border: 0.5px solid rgba(255,255,255,0.15);
+  max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.b-cover-title {font-family:'Noto Serif SC',serif;font-size:13.5px;font-weight:700;line-height:1.4;word-break:break-all;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;}
-.b-cover-footer {font-size:10px;opacity:0.9;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.25);padding-top:5px;margin-top:auto;}
 
-/* 【核心清障】移除原本冗长的多余白纸堆和厚度面，防止生成突兀大空白尾巴 */
-.b-spine { width: 8px; left: -4px; transform: rotateY(-90deg) translateZ(0); background: #e05372; z-index: 4; }
-.b-page-stack { width: 100%; background: #fffcf5; transform: translateZ(-2px); z-index: 3; }
+/* 【核心更新】下半部分：白底文字说明纸页，高度经过极限精简紧凑，绝不留空 */
+.b-cover-bottom {
+  position: absolute;top: 165px;left: 0;width: 100%;height: 80px;
+  background: #fffdf9;z-index: 5;padding: 8px 10px;
+  border: 1px solid var(--border);border-top: none;
+  border-radius: 0 0 8px 4px;
+  box-shadow: 4px 4px 10px rgba(44,36,37,0.12);
+  display: flex;flex-direction: column;justify-content: space-between;
+  transform: translateZ(2px);
+}
+.b-cover-title {
+  font-family:'Noto Serif SC',serif;font-size:12.5px;font-weight:700;color:var(--text);
+  line-height: 1.4;word-break:break-all;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.b-cover-footer {
+  font-size:10px;color:var(--text2);opacity:0.8;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1.5px dashed var(--bg2);padding-top:4px;margin-top:2px;
+}
 
-/* 【核心重构方案】剔除原本下方的大淡黄色拖尾容器，改为优雅的卡片悬浮内嵌小气泡按钮 */
+/* 侧边连贯物理结构 */
+.b-spine { position: absolute; top: 0; bottom: 0; width: 8px; left: -4px; transform: rotateY(-90deg) translateZ(0); background: #e05372; z-index: 4; border-radius: 4px 0 0 4px; }
+.b-page-stack { position: absolute; inset: 0; background: #fffcf5; transform: translateZ(-2px); z-index: 3; border-radius: 4px 8px 8px 4px; }
+
+/* 悬浮操作小气泡，移至右下角紧凑区 */
 .book-actions {
-  position: absolute; bottom: 8px; right: 8px; z-index: 15;
+  position: absolute; top: 130px; right: 8px; z-index: 15;
   display: flex; gap: 4px; opacity: 0; transform: translateY(4px);
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .book-container:hover .book-actions { opacity: 1; transform: translateY(0); }
 
 .action-btn-sm {
-  background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px);
   border: 1px solid rgba(255,107,139,0.2); cursor: pointer; font-size: 11px;
   padding: 3px 7px; border-radius: 6px; color: var(--text); font-weight: 500;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: all 0.15s;
@@ -253,7 +268,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-<!-- 暗号弹窗 -->
 <div id="passphraseModal" class="overlay" style="display:none">
   <div class="modal passphrase-modal">
     <div class="modal-header"><h2>🔑 输入专属恋爱暗号</h2></div>
@@ -270,7 +284,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-<!-- 编辑弹窗 -->
 <div id="editModal" class="overlay" style="display:none" onclick="overlayClose(event,'editModal')">
   <div class="modal">
     <div class="modal-header">
@@ -303,7 +316,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-<!-- 沉浸式翻书大窗 -->
 <div id="bookOverlay" class="book-overlay" style="display:none">
   <div class="book-header">
     <div class="book-header-title" id="bookActiveShelfTitle">🌸 某某合集</div>
@@ -323,7 +335,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-<!-- 图片放大 -->
 <div id="imgZoom" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:400;align-items:center;justify-content:center;cursor:zoom-out" onclick="this.style.display='none'">
   <img id="imgZoomSrc" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:12px">
 </div>
@@ -438,24 +449,23 @@ function renderShelf(){
       const coverImgSrc = entry.img ? entry.img : null;
       const cleanTagName = categoryName.replace('📂 ', '').replace(' 合集', '');
 
-      // 【核心更新】剔除了原本大面积占位的黄纸片DOM结构，改成优雅干净的 3D 照片挂件模式
+      // 【核心升级版图文混排结构】上半部分是独立照片，下半部分是高度严格控制的精致白底标题，绝不留白！
       bookContainer.innerHTML = `
         <div class="book-3d">
-          <div class="b-face b-cover ${coverImgSrc ? '' : 'no-photo-bg'}">
+          <div class="b-face b-cover-top ${coverImgSrc ? '' : 'no-photo-bg'}">
             ${coverImgSrc ? `<img class="b-cover-img-bg" src="${coverImgSrc}">` : ''}
-            <div class="b-cover-content">
-              <span class="b-cover-tag-badge">${cleanTagName}</span>
-              <div class="b-cover-title">${entry.title||'未命名瞬间'}</div>
-              <div class="b-cover-footer">
-                <span>📖 翻阅手帐</span>
-                <span>${entry.date.substring(5)}</span>
-              </div>
+            <span class="b-cover-tag-badge">${cleanTagName}</span>
+          </div>
+          <div class="b-face b-cover-bottom">
+            <div class="b-cover-title">${entry.title||'未命名瞬间'}</div>
+            <div class="b-cover-footer">
+              <span>📖 翻阅手帐</span>
+              <span>${entry.date.substring(5)}</span>
             </div>
           </div>
           <div class="b-face b-spine"></div>
           <div class="b-face b-page-stack"></div>
         </div>
-        <!-- 按钮改造成小巧优雅的悬浮气泡按钮，彻底抹杀照片下方的突兀死白区域 -->
         <div class="book-actions">
           <button class="action-btn-sm" onclick="event.stopPropagation();editEntry('${entry.id}')">✏️ 改写</button>
           <button class="action-btn-sm btn-del" onclick="event.stopPropagation();deleteEntry('${entry.id}')">🗑️ 抹去</button>
@@ -608,7 +618,6 @@ function updatePagesVisualStatus(){
   document.getElementById('btnNext3D').disabled = currentFlipIndex === pages.length - 1;
 }
 
-// 物理翻转
 function turnPage3D(dir){
   const bookEl=document.getElementById('realBookElement');
   const pages=bookEl.querySelectorAll('.paper-page');
@@ -670,7 +679,7 @@ function editEntry(id){
   document.getElementById('modalTitle').textContent='重写这段时光';
   document.getElementById('editModal').style.display='flex';
 }
-function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('imgInput').value='';document.getElementById('compressHint').style.display='none';}
+function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('compressHint').style.display='none';}
 
 async function deleteEntry(id){
   if(!confirm('确定要从这个世界上抹去这段甜蜜回忆吗？'))return;
@@ -707,7 +716,7 @@ async function saveEntry(){
   const date=document.getElementById('dateInput').value||today();
   const text=document.getElementById('textInput').value.trim();
   const tagsRaw=document.getElementById('tagsInput').value.trim();
-  const tags=tagsRaw?tagsRaw.replace(/，/g,',').split(',').map(t=>t.trim()).filter(Boolean):[];
+  const tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
   
   if(!title&&!imgData&&!text){alert('不能保存完全空白的内容哦~');return;}
   const entry={id:editId||Date.now().toString(),title,date,text,tags,img:imgData};
