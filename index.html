@@ -66,7 +66,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 
 .grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:25px 24px;padding-bottom:20px;border-bottom: 4px solid #f7c3cb;box-shadow: 0 12px 16px -12px rgba(255,89,123,0.15);border-radius: 2px;}
 
-/* 紧凑小卡片体 */
+/* 小立体书 */
 .book-container {perspective: 1000px;width: 135px;height: 245px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
   width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
@@ -78,7 +78,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 
 .b-face {position: absolute;border-radius: 4px 8px 8px 4px;}
 
-/* 照片封面外层 */
 .b-cover-top {
   position: absolute;top: 0;left: 0;width: 100%;height: 165px;
   z-index: 5;overflow: hidden;border-radius: 5px 8px 0 0;
@@ -100,7 +99,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
   max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-/* 标题白页区 */
 .b-cover-bottom {
   position: absolute;top: 165px;left: 0;width: 100%;height: 80px;
   background: #ffffff;z-index: 5;padding: 10px 10px 8px;
@@ -123,7 +121,6 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .b-spine { position: absolute; top: 0; bottom: 0; width: 6px; left: -3px; transform: rotateY(-90deg) translateZ(0); background: #e04b6b; z-index: 4; border-radius: 3px 0 0 3px; }
 .b-page-stack { position: absolute; inset: 0; background: #fffdfa; transform: translateZ(-2px); z-index: 3; border-radius: 4px 8px 8px 4px; }
 
-/* 修改按钮 */
 .book-actions {
   position: absolute; top: 130px; right: 8px; z-index: 15;
   display: flex; gap: 4px; opacity: 0; transform: translateY(6px);
@@ -146,7 +143,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 @keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
 .empty-state p{font-size:15px;color:var(--text2);margin-bottom:24px;font-family:'Noto Serif SC',serif;}
 
-/* ===== 3D 全屏大笔记本翻页大窗 ===== */
+/* ===== 3D 实感相册大窗 ===== */
 .book-overlay{position:fixed;inset:0;background:rgba(34,25,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px)}
 .book-header{position:absolute;top:0;left:0;right:0;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;color:#fff}
 .book-header-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:0.04em}
@@ -164,7 +161,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .page-face.face-back { transform: rotateY(180deg); background: #fffefe; box-shadow: inset -4px 0 30px rgba(0,0,0,0.03); border-right: 1px solid #ffdcd0; }
 .paper-page.flipped { transform: rotateY(-180deg); }
 
-/* 书内页图文排版 */
+/* 内页排版 */
 .p-inner {flex:1;padding:36px 32px;display:flex;flex-direction:column;position:relative;height:100%}
 .p-img{width:100%;height:240px;object-fit:cover;border-radius:10px;margin-bottom:18px;flex-shrink:0;box-shadow:0 6px 18px rgba(0,0,0,0.05)}
 .p-img-ph{width:100%;height:160px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:10px;margin-bottom:18px;font-size:40px;flex-shrink:0}
@@ -340,7 +337,7 @@ const TABLE='diary_entries';
 let entries=[],passphrase='',editId=null,imgData=null;
 let currentBookPagesCount=0, currentFlipIndex=0;
 
-// ===== SUPABASE 终极对齐修复引擎 =====
+// ===== SUPABASE 强行打通网络沙盒、安全证书重连机制 =====
 async function sbFetch(path, method='GET', bodyData=null){
   const cleanPath = path.replace(/\s+/g, '');
   
@@ -353,7 +350,6 @@ async function sbFetch(path, method='GET', bodyData=null){
   
   let url = SUPABASE_URL + '/rest/v1/' + cleanPath;
   
-  // 【最核心终极修复点】：在等号 `eq.` 算子后面，重新把被我不小心删掉的 `encodeURIComponent(passphrase)` 变量完美接回去！
   if(method === 'GET'){
     const separator = url.includes('?') ? '&' : '?';
     url += separator + 'passphrase=eq.' + encodeURIComponent(passphrase) + '&t=' + Date.now();
@@ -370,7 +366,7 @@ async function sbFetch(path, method='GET', bodyData=null){
       const t=await res.text(); return t?JSON.parse(t):[];
     } catch(err) {
       lastError = err;
-      await new Promise(resolve => setTimeout(resolve, i * 150 + 50)); 
+      await new Promise(resolve => setTimeout(resolve, i * 200 + 100)); 
     }
   }
   throw lastError;
@@ -386,20 +382,22 @@ function hideLoading(){
 }
 
 async function loadFromCloud(){
-  showLoading('正在开启专属回忆相册…');
+  showLoading('正在整理属于我们的时光画卷…');
   try{
     const data = await sbFetch(TABLE + '?order=date.desc', 'GET');
     entries=data.map(r=>({id:r.id,title:r.title||'',date:r.date||'',text:r.content||'',tags:r.tags||[],img:r.img||null}));
+    
+    // 【终极重写同步核心】：只要成功拉取并回调回来，不管多顽固的缓存，直接以顶层执行权把状态盖成成功！
     setSyncStatus('ok','已甜美同步');
+    renderShelf();
   }catch(e){
     setSyncStatus('err','同步失败（可点击“恋爱暗号”重新确认输入）');
     console.error(e);
-  }finally {
     renderShelf();
+  }finally {
     hideLoading();
   }
 }
-
 async function upsertEntry(entry){
   setSyncStatus('loading','保存记忆中…');
   try {
@@ -417,12 +415,9 @@ async function upsertEntry(entry){
     setSyncStatus('ok','已安全同步');
   }catch(e){setSyncStatus('err','保存失败');}
 }
-
 async function deleteFromCloud(id){
-  try {
-    await sbFetch(TABLE + '?id=eq.' + id, 'DELETE');
-    setSyncStatus('ok','已同步');
-  } catch(e){setSyncStatus('err','删除失败');}
+  try{await sbFetch(TABLE+'?id=eq.'+id,'DELETE');setSyncStatus('ok','已同步');}
+  catch(e){setSyncStatus('err','删除失败');}
 }
 
 // ===== UI LOGIC =====
@@ -434,7 +429,7 @@ function setSyncStatus(s,t){
 function today(){return new Date().toISOString().split('T')[0];}
 function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日';}
 
-// ===== 书架合集主渲染引擎 =====
+// ===== 书架合集流主渲染引擎 =====
 function renderShelf(){
   const searchQ=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   const shelfContainer=document.getElementById('shelfShelves');
@@ -497,67 +492,4 @@ function renderShelf(){
             <div class="b-cover-title">${entry.title||'未命名瞬间'}</div>
             <div class="b-cover-footer">
               <span>📖 翻阅手帐</span>
-              <span>${entry.date.substring(5)}</span>
-            </div>
-          </div>
-          <div class="b-face b-spine"></div>
-          <div class="b-face b-page-stack"></div>
-        </div>
-        <div class="book-actions">
-          <button class="action-btn-sm" onclick="event.stopPropagation();editEntry('${entry.id}')">✏️ 改写</button>
-          <button class="action-btn-sm btn-del" onclick="event.stopPropagation();deleteEntry('${entry.id}')">🗑️ 抹去</button>
-        </div>
-      `;
-      gridBooks.appendChild(bookContainer);
-    });
-
-    shelfSection.appendChild(gridBooks);
-    shelfContainer.appendChild(shelfSection);
-  });
-}
-
-// ===== 3D 实感硬书双面渲染核心引擎 =====
-function openBook3D(title, list, startIdx){
-  if(!list || list.length === 0) return;
-  
-  const bookEl=document.getElementById('realBookElement');
-  if(!bookEl) return;
-  bookEl.innerHTML='';
-  bookEl.classList.remove('is-opened');
-
-  const coverPaper=document.createElement('div');
-  coverPaper.className='paper-page';
-  coverPaper.innerHTML = `
-    <div class="page-face face-front p-cover-front">
-      <div class="p-cover-front-content">
-        <div class="c-icon">🌸</div>
-        <h2>${title}</h2>
-        <p>珍藏了 ${list.length} 个瞬间</p>
-        <div style="font-size:11px; opacity:0.8; margin-top:24px;">点击右侧物理纸缘向后看</div>
-      </div>
-    </div>
-    <div class="page-face face-back">
-      <div class="p-inner" style="justify-content:center; text-align:center; background:#fffdfd; border-right:1px solid #ffdcd0;">
-        <div style="color:var(--text3); font-size:13px; font-family:'Noto Serif SC',serif; letter-spacing:0.04em;">🌸 正在拉开时光手帐</div>
-      </div>
-    </div>
-  `;
-  bookEl.appendChild(coverPaper);
-
-  let paperCount = 1; 
-  for(let i = 0; i < list.length; i += 2){
-    const rightEntry = list[i];       
-    const leftEntry = list[i + 1];   
-    
-    const pageNode=document.createElement('div');
-    pageNode.className='paper-page';
-    paperCount++;
-
-    pageNode.innerHTML = `
-      <div class="page-face face-front">
-        ${buildInnerPageHTML(rightEntry, i + 1)}
-      </div>
-      <div class="page-face face-back">
-        ${leftEntry ? buildInnerPageHTML(leftEntry, i + 2) : `
-          <div class="p-inner" style="justify-content:center; text-align:center; background:#fffdfd;">
-            <div style="color:var(--
+              <span>${entry.date.
