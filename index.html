@@ -350,9 +350,10 @@ async function sbFetch(path, method = 'GET', bodyData = null) {
   let url = SUPABASE_URL + '/rest/v1/' + path;
 
   if (method === 'GET') {
+    // 不在 URL 过滤 passphrase，规避 PostgREST 纯数字解析 bug；在 JS 层按 passphrase 过滤
     const sep = url.includes('?') ? '&' : '?';
-    // 用双引号包裹，强制 PostgREST 按字符串解析，避免纯数字暗号触发 400
-    url += sep + 'passphrase=eq.' + encodeURIComponent('"' + passphrase + '"') + '&t=' + Date.now();
+    url += sep + 't=' + Date.now();
+    headers['Accept'] = 'application/json';
   }
 
   let lastError;
@@ -399,7 +400,9 @@ async function loadFromCloud() {
   showLoading('正在开启专属回忆相册…');
   try {
     const data = await sbFetch(TABLE + '?order=date.desc', 'GET');
-    entries = data.map(r => ({
+    // 在 JS 层按 passphrase 过滤，避免 PostgREST 纯数字 URL 参数解析错误
+    const filtered = data.filter(r => String(r.passphrase) === String(passphrase));
+    entries = filtered.map(r => ({
       id: r.id, title: r.title || '', date: r.date || '',
       text: r.content || '', tags: r.tags || [], img: r.img || null
     }));
