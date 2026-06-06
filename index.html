@@ -351,7 +351,8 @@ async function sbFetch(path, method = 'GET', bodyData = null) {
 
   if (method === 'GET') {
     const sep = url.includes('?') ? '&' : '?';
-    url += sep + 'passphrase=eq.' + encodeURIComponent(passphrase) + '&t=' + Date.now();
+    // 用双引号包裹，强制 PostgREST 按字符串解析，避免纯数字暗号触发 400
+    url += sep + 'passphrase=eq.' + encodeURIComponent('"' + passphrase + '"') + '&t=' + Date.now();
   }
 
   let lastError;
