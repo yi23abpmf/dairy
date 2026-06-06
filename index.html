@@ -339,38 +339,45 @@ let entries = [], passphrase = '', editId = null, imgData = null;
 let currentBookList = [], currentFlipIndex = 0;
 
 // ===== Supabase API 核心包装器 =====
-async function sbFetch(path, method = 'GET', bodyData = null) {
+// passphrase 过滤完全在 JS 层做，不放进 URL，彻底规避 PostgREST 数字解析 bug
+async function sbGet() {
+  const url = SUPABASE_URL + '/rest/v1/' + TABLE + '?order=date.desc&select=*';
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Accept': 'application/json'
+  };
+  let lastError;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const res = await fetch(url, { headers });
+      if (!res.ok) throw new Error(await res.text());
+      return await res.json();
+    } catch (err) { lastError = err; await new Promise(r => setTimeout(r, i * 300 + 100)); }
+  }
+  throw lastError;
+}
+
+async function sbUpsert(payload) {
+  const url = SUPABASE_URL + '/rest/v1/' + TABLE;
   const headers = {
     'apikey': SUPABASE_KEY,
     'Authorization': 'Bearer ' + SUPABASE_KEY,
     'Content-Type': 'application/json',
-    'Prefer': 'return=representation'
+    'Prefer': 'return=minimal,resolution=merge-duplicates'
   };
+  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
+  if (!res.ok) throw new Error(await res.text());
+}
 
-  let url = SUPABASE_URL + '/rest/v1/' + path;
-
-  if (method === 'GET') {
-    // 不在 URL 过滤 passphrase，规避 PostgREST 纯数字解析 bug；在 JS 层按 passphrase 过滤
-    const sep = url.includes('?') ? '&' : '?';
-    url += sep + 't=' + Date.now();
-    headers['Accept'] = 'application/json';
-  }
-
-  let lastError;
-  for (let i = 0; i < 3; i++) {
-    try {
-      const options = { method, headers };
-      if (bodyData) options.body = JSON.stringify(bodyData);
-      const res = await fetch(url, options);
-      if (!res.ok) { const e = await res.text(); throw new Error(e); }
-      const t = await res.text();
-      return t ? JSON.parse(t) : [];
-    } catch (err) {
-      lastError = err;
-      await new Promise(r => setTimeout(r, i * 200 + 80));
-    }
-  }
-  throw lastError;
+async function sbDelete(id) {
+  const url = SUPABASE_URL + '/rest/v1/' + TABLE + '?id=eq.' + encodeURIComponent(id);
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY
+  };
+  const res = await fetch(url, { method: 'DELETE', headers });
+  if (!res.ok) throw new Error(await res.text());
 }
 
 // ===== 工具函数 =====
@@ -399,9 +406,10 @@ function uid() { return Date.now().toString(36) + Math.random().toString(36).sli
 async function loadFromCloud() {
   showLoading('正在开启专属回忆相册…');
   try {
-    const data = await sbFetch(TABLE + '?order=date.desc', 'GET');
-    // 在 JS 层按 passphrase 过滤，避免 PostgREST 纯数字 URL 参数解析错误
-    const filtered = data.filter(r => String(r.passphrase) === String(passphrase));
+    const data = await sbGet();
+    // JS 层按 passphrase 过滤（字符串比较），完全不依赖 URL 参数
+    const myPass = String(passphrase).trim();
+    const filtered = data.filter(r => String(r.passphrase).trim() === myPass);
     entries = filtered.map(r => ({
       id: r.id, title: r.title || '', date: r.date || '',
       text: r.content || '', tags: r.tags || [], img: r.img || null
@@ -420,19 +428,20 @@ async function upsertEntry(entry) {
   setSyncStatus('loading', '保存记忆中…');
   try {
     const payload = {
-      id: entry.id, passphrase,
+      id: entry.id,
+      passphrase: String(passphrase),
       title: entry.title, date: entry.date,
       content: entry.text, tags: entry.tags,
       img: entry.img, updated_at: new Date().toISOString()
     };
-    await sbFetch(TABLE, 'POST', payload);
+    await sbUpsert(payload);
     setSyncStatus('ok', '已安全同步');
   } catch (e) { setSyncStatus('err', '保存失败'); console.error(e); }
 }
 
 async function deleteFromCloud(id) {
   try {
-    await sbFetch(TABLE + '?id=eq.' + id, 'DELETE');
+    await sbDelete(id);
     setSyncStatus('ok', '已同步');
   } catch (e) { setSyncStatus('err', '删除失败'); }
 }
