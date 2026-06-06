@@ -492,4 +492,297 @@ function renderShelf(){
             <div class="b-cover-title">${entry.title||'未命名瞬间'}</div>
             <div class="b-cover-footer">
               <span>📖 翻阅手帐</span>
-              <span>${entry.date.
+              <span>${entry.date.substring(5)}</span>
+            </div>
+          </div>
+          <div class="b-face b-spine"></div>
+          <div class="b-face b-page-stack"></div>
+        </div>
+        <div class="book-actions">
+          <button class="action-btn-sm" onclick="event.stopPropagation();editEntry('${entry.id}')">✏️ 改写</button>
+          <button class="action-btn-sm btn-del" onclick="event.stopPropagation();deleteEntry('${entry.id}')">🗑️ 抹去</button>
+        </div>
+      `;
+      gridBooks.appendChild(bookContainer);
+    });
+
+    shelfSection.appendChild(gridBooks);
+    shelfContainer.appendChild(shelfSection);
+  });
+}
+
+// ===== 3D 实感硬书双面渲染核心引擎 =====
+function openBook3D(title, list, startIdx){
+  if(!list || list.length === 0) return;
+  
+  const bookEl=document.getElementById('realBookElement');
+  if(!bookEl) return;
+  bookEl.innerHTML='';
+  bookEl.classList.remove('is-opened');
+
+  const coverPaper=document.createElement('div');
+  coverPaper.className='paper-page';
+  coverPaper.innerHTML = `
+    <div class="page-face face-front p-cover-front">
+      <div class="p-cover-front-content">
+        <div class="c-icon">🌸</div>
+        <h2>${title}</h2>
+        <p>珍藏了 ${list.length} 个瞬间</p>
+        <div style="font-size:11px; opacity:0.8; margin-top:24px;">点击右侧物理纸缘向后看</div>
+      </div>
+    </div>
+    <div class="page-face face-back">
+      <div class="p-inner" style="justify-content:center; text-align:center; background:#fffdfd; border-right:1px solid #ffdcd0;">
+        <div style="color:var(--text3); font-size:13px; font-family:'Noto Serif SC',serif; letter-spacing:0.04em;">🌸 正在拉开时光手帐</div>
+      </div>
+    </div>
+  `;
+  bookEl.appendChild(coverPaper);
+
+  let paperCount = 1; 
+  for(let i = 0; i < list.length; i += 2){
+    const rightEntry = list[i];       
+    const leftEntry = list[i + 1];   
+    
+    const pageNode=document.createElement('div');
+    pageNode.className='paper-page';
+    paperCount++;
+
+    pageNode.innerHTML = `
+      <div class="page-face face-front">
+        ${buildInnerPageHTML(rightEntry, i + 1)}
+      </div>
+      <div class="page-face face-back">
+        ${leftEntry ? buildInnerPageHTML(leftEntry, i + 2) : `
+          <div class="p-inner" style="justify-content:center; text-align:center; background:#fffdfd;">
+            <div style="color:var(--text3); font-size:13px; font-family:'Noto Serif SC',serif;">🌸 记录爱，留住爱 · 期待下一次心动</div>
+          </div>
+        `}
+      </div>
+    `;
+    bookEl.appendChild(pageNode);
+  }
+
+  currentBookPagesCount = paperCount;
+
+  const allPages=bookEl.querySelectorAll('.paper-page');
+  allPages.forEach((page, pIdx)=>{
+    page.onclick=(evt)=>{
+      const rect = page.getBoundingClientRect();
+      const clickX = evt.clientX - rect.left;
+      if(clickX > rect.width / 2){
+        turnPage3D(1);
+      } else {
+        turnPage3D(-1);
+      }
+    };
+  });
+
+  document.getElementById('bookOverlay').style.display='flex';
+  document.body.style.overflow='hidden';
+
+  currentFlipIndex=0;
+  updatePagesVisualStatus();
+  
+  if(startIdx >= 0){
+    const targetPaperIndex = Math.floor(startIdx / 2) + 1;
+    setTimeout(()=>{
+      for(let k=0; k < targetPaperIndex; k++){
+         turnPage3D(1);
+      }
+    },220);
+  }
+}
+
+function buildInnerPageHTML(entry, pageNum) {
+  if(!entry) return '';
+  return `
+    <div class="p-inner">
+      ${entry.img ? `<img class="p-img" src="${entry.img}">` : `<div class="p-img-ph">💝</div>`}
+      <div class="p-date">${fmt(entry.date)}</div>
+      <div class="p-title">${entry.title||'未命名瞬间'}</div>
+      <div class="p-scroll">
+        <div class="p-text">${entry.text.replace(/\n/g,'<br>')}</div>
+      </div>
+      ${entry.tags.length ? `<div class="p-tags">${entry.tags.map(t=>`<span class="p-tag">${t}</span>`).join('')}</div>` : ''}
+      <div class="p-num">${pageNum}</div>
+    </div>
+  `;
+}
+
+function updatePagesVisualStatus(){
+  const bookEl=document.getElementById('realBookElement');
+  if(!bookEl) return;
+  const pages=bookEl.querySelectorAll('.paper-page');
+  if(!pages.length) return;
+  
+  if(currentFlipIndex > 0){
+    bookEl.classList.add('is-opened');
+  } else {
+    bookEl.classList.remove('is-opened');
+  }
+
+  pages.forEach((page, idx)=>{
+    if(idx < currentFlipIndex){
+      page.classList.add('flipped');
+      page.style.zIndex = 10 + idx;
+    } else {
+      page.classList.remove('flipped');
+      page.style.zIndex = 100 - idx;
+    }
+    
+    if(idx === currentFlipIndex || idx === currentFlipIndex - 1){
+      page.classList.add('active-flip');
+    } else {
+      page.classList.remove('active-flip');
+    }
+  });
+
+  bookEl.querySelectorAll('.p-img').forEach(img=>{
+     img.style.cursor='zoom-in';
+     img.onclick=(e)=>{
+       e.stopPropagation();
+       document.getElementById('imgZoomSrc').src=img.src;
+       document.getElementById('imgZoom').style.display='flex';
+     };
+  });
+
+  const pageCounter = document.getElementById('bookPageCounter3D');
+  if(pageCounter) pageCounter.textContent = `第 ${currentFlipIndex + 1} / ${currentBookPagesCount} 叠回忆`;
+  
+  const btnPrev = document.getElementById('btnPrev3D');
+  const btnNext = document.getElementById('btnNext3D');
+  if(btnPrev) btnPrev.disabled = currentFlipIndex === 0;
+  if(btnNext) btnNext.disabled = currentFlipIndex === pages.length - 1;
+}
+
+function turnPage3D(dir){
+  const bookEl=document.getElementById('realBookElement');
+  if(!bookEl) return;
+  const pages=bookEl.querySelectorAll('.paper-page');
+  const newIndex = currentFlipIndex + dir;
+  if(newIndex < 0 || newIndex >= pages.length) return;
+  
+  currentFlipIndex = newIndex;
+  updatePagesVisualStatus();
+}
+
+// 关闭
+function closeBook(){
+  document.getElementById('bookOverlay').style.display='none';
+  document.body.style.overflow='';
+}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('bookOverlay').style.display==='none')return;
+  if(e.key==='ArrowRight') turnPage3D(1);
+  if(e.key==='ArrowLeft') turnPage3D(-1);
+  if(e.key==='Escape') closeBook();
+});
+
+// ===== EDIT AREAS =====
+function openPassphrase(){
+  document.getElementById('passphraseInput').value=passphrase||'';
+  document.getElementById('passphraseModal').style.display='flex';
+}
+function confirmPassphrase(){
+  const val=document.getElementById('passphraseInput').value.trim();
+  if(!val){alert('请输入恋爱暗号哦');return;}
+  passphrase=val.replace(/^\s+|\s+$/g, '');
+  localStorage.setItem('diary_passphrase',passphrase);
+  closeModal('passphraseModal');
+  loadFromCloud();
+}
+function openNew(){
+  editId=null;imgData=null;
+  document.getElementById('titleInput').value='';
+  document.getElementById('dateInput').value=today();
+  document.getElementById('textInput').value='';
+  document.getElementById('tagsInput').value='';
+  document.getElementById('imgPreview').src='';
+  document.getElementById('previewWrap').style.display='none';
+  document.getElementById('uploadArea').style.display='block';
+  document.getElementById('imgInput').value='';
+  document.getElementById('compressHint').style.display='none';
+  document.getElementById('modalTitle').textContent='记录新的甜蜜瞬间';
+  document.getElementById('editModal').style.display='flex';
+}
+function editEntry(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  editId=id;imgData=e.img||null;
+  document.getElementById('titleInput').value=e.title||'';
+  document.getElementById('dateInput').value=e.date||today();
+  document.getElementById('textInput').value=e.text||'';
+  document.getElementById('tagsInput').value=(e.tags||[]).join(', ');
+  document.getElementById('compressHint').style.display='none';
+  if(e.img){document.getElementById('imgPreview').src=e.img;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none';}
+  else{document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';}
+  document.getElementById('modalTitle').textContent='重写这段时光';
+  document.getElementById('editModal').style.display='flex';
+}
+function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('compressHint').style.display='none';}
+
+async function deleteEntry(id){
+  if(!confirm('确定要从这个世界上抹去这段甜蜜回忆吗？'))return;
+  entries=entries.filter(x=>x.id!==id);renderShelf();
+  await deleteFromCloud(id);
+}
+
+function handleImg(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.src=ev.target.result;
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      let width=img.width; let height=img.height;
+      const MAX_WIDTH=1024;
+      if(width>MAX_WIDTH){ height=Math.round((height*MAX_WIDTH)/width); width=MAX_WIDTH; }
+      canvas.width=width; canvas.height=height;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,width,height);
+      imgData=canvas.toDataURL('image/jpeg',0.8);
+      document.getElementById('imgPreview').src=imgData;
+      document.getElementById('previewWrap').style.display='block';
+      document.getElementById('uploadArea').style.display='none';
+      document.getElementById('compressHint').style.display='block';
+    };
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveEntry(){
+  const title=document.getElementById('titleInput').value.trim();
+  const date=document.getElementById('dateInput').value||today();
+  const text=document.getElementById('textInput').value.trim();
+  const tagsRaw=document.getElementById('tagsInput').value.trim();
+  const tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
+  
+  if(!title&&!imgData&&!text){alert('不能保存完全空白的内容哦~');return;}
+  const entry={id:editId||Date.now().toString(),title,date,text,tags,img:imgData};
+  
+  if(editId){const i=entries.findIndex(x=>x.id===editId);if(i>=0)entries[i]=entry;}
+  else entries.unshift(entry);
+  
+  closeModal('editModal');
+  renderShelf();
+  await upsertEntry(entry);
+}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+
+// ===== 启动生命周期 =====
+(async function init(){
+  const saved=localStorage.getItem('diary_passphrase');
+  if(saved){
+    passphrase=saved.replace(/^\s+|\s+$/g, '');
+    await loadFromCloud();
+  } else {
+    hideLoading();
+    openPassphrase();
+  }
+})();
+</script>
+</body>
+</html>
