@@ -66,7 +66,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 
 .grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:25px 24px;padding-bottom:20px;border-bottom: 4px solid #f7c3cb;box-shadow: 0 12px 16px -12px rgba(255,89,123,0.15);border-radius: 2px;}
 
-/* 紧凑小书卡片体 */
+/* 紧凑小卡片体 */
 .book-container {perspective: 1000px;width: 135px;height: 245px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
   width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
@@ -146,7 +146,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 @keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
 .empty-state p{font-size:15px;color:var(--text2);margin-bottom:24px;font-family:'Noto Serif SC',serif;}
 
-/* ===== 3D 全屏大相册大窗 ===== */
+/* ===== 3D 全屏大笔记本翻页大窗 ===== */
 .book-overlay{position:fixed;inset:0;background:rgba(34,25,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px)}
 .book-header{position:absolute;top:0;left:0;right:0;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;color:#fff}
 .book-header-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:0.04em}
@@ -212,7 +212,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
 .compress-hint{font-size:11px;color:var(--accent);margin-top:4px;display:none}
 
-/* 初始转圈遮罩 */
+/* 初始转圈层 */
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:14px}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -340,7 +340,7 @@ const TABLE='diary_entries';
 let entries=[],passphrase='',editId=null,imgData=null;
 let currentBookPagesCount=0, currentFlipIndex=0;
 
-// ===== 【超级Bug解封】云端底层标准的条件请求构造器 =====
+// ===== SUPABASE 终极对齐修复引擎 =====
 async function sbFetch(path, method='GET', bodyData=null){
   const cleanPath = path.replace(/\s+/g, '');
   
@@ -351,9 +351,9 @@ async function sbFetch(path, method='GET', bodyData=null){
     'Prefer': 'return=representation'
   };
   
-  // 【核心修复代码】：在发起 GET 拉取数据包时，使用标准、显式的 RLS 级连路径。
-  // 将口令 `passphrase=eq.` 严格绑定在主路由条件上，不和时间戳混合编码，彻底切断控制台的 400 Bad Request 报错！
   let url = SUPABASE_URL + '/rest/v1/' + cleanPath;
+  
+  // 【最核心终极修复点】：在等号 `eq.` 算子后面，重新把被我不小心删掉的 `encodeURIComponent(passphrase)` 变量完美接回去！
   if(method === 'GET'){
     const separator = url.includes('?') ? '&' : '?';
     url += separator + 'passphrase=eq.' + encodeURIComponent(passphrase) + '&t=' + Date.now();
@@ -560,233 +560,4 @@ function openBook3D(title, list, startIdx){
       <div class="page-face face-back">
         ${leftEntry ? buildInnerPageHTML(leftEntry, i + 2) : `
           <div class="p-inner" style="justify-content:center; text-align:center; background:#fffdfd;">
-            <div style="color:var(--text3); font-size:13px; font-family:'Noto Serif SC',serif;">🌸 记录爱，留住爱 · 期待下一次心动</div>
-          </div>
-        `}
-      </div>
-    `;
-    bookEl.appendChild(pageNode);
-  }
-
-  currentBookPagesCount = paperCount;
-
-  const allPages=bookEl.querySelectorAll('.paper-page');
-  allPages.forEach((page, pIdx)=>{
-    page.onclick=(evt)=>{
-      const rect = page.getBoundingClientRect();
-      const clickX = evt.clientX - rect.left;
-      if(clickX > rect.width / 2){
-        turnPage3D(1);
-      } else {
-        turnPage3D(-1);
-      }
-    };
-  });
-
-  document.getElementById('bookOverlay').style.display='flex';
-  document.body.style.overflow='hidden';
-
-  currentFlipIndex=0;
-  updatePagesVisualStatus();
-  
-  if(startIdx >= 0){
-    const targetPaperIndex = Math.floor(startIdx / 2) + 1;
-    setTimeout(()=>{
-      for(let k=0; k < targetPaperIndex; k++){
-         turnPage3D(1);
-      }
-    },220);
-  }
-}
-
-function buildInnerPageHTML(entry, pageNum) {
-  if(!entry) return '';
-  return `
-    <div class="p-inner">
-      ${entry.img ? `<img class="p-img" src="${entry.img}">` : `<div class="p-img-ph">💝</div>`}
-      <div class="p-date">${fmt(entry.date)}</div>
-      <div class="p-title">${entry.title||'未命名瞬间'}</div>
-      <div class="p-scroll">
-        <div class="p-text">${entry.text.replace(/\n/g,'<br>')}</div>
-      </div>
-      ${entry.tags.length ? `<div class="p-tags">${entry.tags.map(t=>`<span class="p-tag">${t}</span>`).join('')}</div>` : ''}
-      <div class="p-num">${pageNum}</div>
-    </div>
-  `;
-}
-
-function updatePagesVisualStatus(){
-  const bookEl=document.getElementById('realBookElement');
-  if(!bookEl) return;
-  const pages=bookEl.querySelectorAll('.paper-page');
-  if(!pages.length) return;
-  
-  if(currentFlipIndex > 0){
-    bookEl.classList.add('is-opened');
-  } else {
-    bookEl.classList.remove('is-opened');
-  }
-
-  pages.forEach((page, idx)=>{
-    if(idx < currentFlipIndex){
-      page.classList.add('flipped');
-      page.style.zIndex = 10 + idx;
-    } else {
-      page.classList.remove('flipped');
-      page.style.zIndex = 100 - idx;
-    }
-    
-    if(idx === currentFlipIndex || idx === currentFlipIndex - 1){
-      page.classList.add('active-flip');
-    } else {
-      page.classList.remove('active-flip');
-    }
-  });
-
-  bookEl.querySelectorAll('.p-img').forEach(img=>{
-     img.style.cursor='zoom-in';
-     img.onclick=(e)=>{
-       e.stopPropagation();
-       document.getElementById('imgZoomSrc').src=img.src;
-       document.getElementById('imgZoom').style.display='flex';
-     };
-  });
-
-  const pageCounter = document.getElementById('bookPageCounter3D');
-  if(pageCounter) pageCounter.textContent = `第 ${currentFlipIndex + 1} / ${currentBookPagesCount} 叠回忆`;
-  
-  const btnPrev = document.getElementById('btnPrev3D');
-  const btnNext = document.getElementById('btnNext3D');
-  if(btnPrev) btnPrev.disabled = currentFlipIndex === 0;
-  if(btnNext) btnNext.disabled = currentFlipIndex === pages.length - 1;
-}
-
-function turnPage3D(dir){
-  const bookEl=document.getElementById('realBookElement');
-  if(!bookEl) return;
-  const pages=bookEl.querySelectorAll('.paper-page');
-  const newIndex = currentFlipIndex + dir;
-  if(newIndex < 0 || newIndex >= pages.length) return;
-  
-  currentFlipIndex = newIndex;
-  updatePagesVisualStatus();
-}
-
-function closeBook(){
-  document.getElementById('bookOverlay').style.display='none';
-  document.body.style.overflow='';
-}
-
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('bookOverlay').style.display==='none')return;
-  if(e.key==='ArrowRight') turnPage3D(1);
-  if(e.key==='ArrowLeft') turnPage3D(-1);
-  if(e.key==='Escape') closeBook();
-});
-
-// ===== EDIT AREAS =====
-function openPassphrase(){
-  document.getElementById('passphraseInput').value=passphrase||'';
-  document.getElementById('passphraseModal').style.display='flex';
-}
-function confirmPassphrase(){
-  const val=document.getElementById('passphraseInput').value.trim();
-  if(!val){alert('请输入恋爱暗号哦');return;}
-  passphrase=val.replace(/^\s+|\s+$/g, '');
-  localStorage.setItem('diary_passphrase',passphrase);
-  closeModal('passphraseModal');
-  loadFromCloud();
-}
-function openNew(){
-  editId=null;imgData=null;
-  document.getElementById('titleInput').value='';
-  document.getElementById('dateInput').value=today();
-  document.getElementById('textInput').value='';
-  document.getElementById('tagsInput').value='';
-  document.getElementById('imgPreview').src='';
-  document.getElementById('previewWrap').style.display='none';
-  document.getElementById('uploadArea').style.display='block';
-  document.getElementById('imgInput').value='';
-  document.getElementById('compressHint').style.display='none';
-  document.getElementById('modalTitle').textContent='记录新的甜蜜瞬间';
-  document.getElementById('editModal').style.display='flex';
-}
-function editEntry(id){
-  const e=entries.find(x=>x.id===id);if(!e)return;
-  editId=id;imgData=e.img||null;
-  document.getElementById('titleInput').value=e.title||'';
-  document.getElementById('dateInput').value=e.date||today();
-  document.getElementById('textInput').value=e.text||'';
-  document.getElementById('tagsInput').value=(e.tags||[]).join(', ');
-  document.getElementById('compressHint').style.display='none';
-  if(e.img){document.getElementById('imgPreview').src=e.img;document.getElementById('previewWrap').style.display='block';document.getElementById('uploadArea').style.display='none';}
-  else{document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';}
-  document.getElementById('modalTitle').textContent='重写这段时光';
-  document.getElementById('editModal').style.display='flex';
-}
-function removeImg(){imgData=null;document.getElementById('imgPreview').src='';document.getElementById('previewWrap').style.display='none';document.getElementById('uploadArea').style.display='block';document.getElementById('compressHint').style.display='none';}
-
-async function deleteEntry(id){
-  if(!confirm('确定要从这个世界上抹去这段甜蜜回忆吗？'))return;
-  entries=entries.filter(x=>x.id!==id);renderShelf();
-  await deleteFromCloud(id);
-}
-
-function handleImg(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    const img=new Image();
-    img.src=ev.target.result;
-    img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      let width=img.width; let height=img.height;
-      const MAX_WIDTH=1024;
-      if(width>MAX_WIDTH){ height=Math.round((height*MAX_WIDTH)/width); width=MAX_WIDTH; }
-      canvas.width=width; canvas.height=height;
-      const ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0,width,height);
-      imgData=canvas.toDataURL('image/jpeg',0.8);
-      document.getElementById('imgPreview').src=imgData;
-      document.getElementById('previewWrap').style.display='block';
-      document.getElementById('uploadArea').style.display='none';
-      document.getElementById('compressHint').style.display='block';
-    };
-  };
-  reader.readAsDataURL(file);
-}
-
-async function saveEntry(){
-  const title=document.getElementById('titleInput').value.trim();
-  const date=document.getElementById('dateInput').value||today();
-  const text=document.getElementById('textInput').value.trim();
-  const tagsRaw=document.getElementById('tagsInput').value.trim();
-  const tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
-  
-  if(!title&&!imgData&&!text){alert('不能保存完全空白的内容哦~');return;}
-  const entry={id:editId||Date.now().toString(),title,date,text,tags,img:imgData};
-  
-  if(editId){const i=entries.findIndex(x=>x.id===editId);if(i>=0)entries[i]=entry;}
-  else entries.unshift(entry);
-  
-  closeModal('editModal');
-  renderShelf();
-  await upsertEntry(entry);
-}
-function closeModal(id){document.getElementById(id).style.display='none';}
-function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
-
-// ===== 启动生命周期 =====
-(async function init(){
-  const saved=localStorage.getItem('diary_passphrase');
-  if(saved){
-    passphrase=saved.replace(/^\s+|\s+$/g, '');
-    await loadFromCloud();
-  } else {
-    hideLoading();
-    openPassphrase();
-  }
-})();
-</script>
-</body>
-</html>
+            <div style="color:var(--
