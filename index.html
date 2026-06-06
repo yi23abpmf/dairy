@@ -66,7 +66,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 
 .grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:25px 24px;padding-bottom:20px;border-bottom: 4px solid #f7c3cb;box-shadow: 0 12px 16px -12px rgba(255,89,123,0.15);border-radius: 2px;}
 
-/*立体书卡片体*/
+/*立体书卡片*/
 .book-container {perspective: 1000px;width: 135px;height: 245px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
   width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
@@ -143,11 +143,11 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 @keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
 .empty-state p{font-size:15px;color:var(--text2);margin-bottom:24px;font-family:'Noto Serif SC',serif;}
 
-/* ===== 3D 实感翻书大舞台 ===== */
+/* ===== 3D 相册大页面 ===== */
 .book-overlay{position:fixed;inset:0;background:rgba(34,25,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px)}
 .book-header{position:absolute;top:0;left:0;right:0;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;color:#fff}
 .book-header-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:0.04em}
-.book-close{background:none;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);border-radius:var(--radius-sm);padding:6px 16px;cursor:pointer;font-size:13px;transition:all 0.25s}
+.book-close{background:none;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;font-size:13px;transition:all 0.25s}
 .book-close:hover{background:var(--accent);border-color:transparent;color:#fff}
 
 .book-scene3d { perspective: 2200px; width: min(860px, 95vw); height: 530px; display: flex; align-items: center; justify-content: center; }
@@ -161,7 +161,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .page-face.face-back { transform: rotateY(180deg); background: #fffefe; box-shadow: inset -4px 0 30px rgba(0,0,0,0.03); border-right: 1px solid #ffdcd0; }
 .paper-page.flipped { transform: rotateY(-180deg); }
 
-/* 内页排版 */
+/* 书内页 */
 .p-inner {flex:1;padding:36px 32px;display:flex;flex-direction:column;position:relative;height:100%}
 .p-img{width:100%;height:240px;object-fit:cover;border-radius:10px;margin-bottom:18px;flex-shrink:0;box-shadow:0 6px 18px rgba(0,0,0,0.05)}
 .p-img-ph{width:100%;height:160px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:10px;margin-bottom:18px;font-size:40px;flex-shrink:0}
@@ -177,7 +177,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .face-front .p-num {right:24px}
 .face-back .p-num {left:24px}
 
-/* 大总册封面 */
+/* 大封面 */
 .p-cover-front {background: linear-gradient(135deg,#ff597b,#ff8e9e);color:#fff;align-items:center;justify-content:center;text-align:center;gap:16px;box-shadow: inset 5px 0 15px rgba(0,0,0,0.12);position: relative;}
 .p-cover-front-content { position: relative; z-index: 2; }
 .p-cover-front h2{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;letter-spacing:0.08em;text-shadow:0 3px 8px rgba(0,0,0,0.12)}
@@ -189,7 +189,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .book-nav-btn:hover:not(:disabled){background:var(--accent);border-color:transparent;transform:scale(1.08)}
 .book-nav-btn:disabled{opacity:0.15;cursor:not-allowed}
 
-/* EDIT MODAL AREA */
+/* MODAL CONTAINER */
 .overlay{position:fixed;inset:0;background:rgba(44,33,35,0.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(5px)}
 .modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
 .modal-header{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
@@ -209,7 +209,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
 .compress-hint{font-size:11px;color:var(--accent);margin-top:4px;display:none}
 
-/* 初始加载遮罩 */
+/* 初始转圈层 */
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:14px}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -300,7 +300,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
       <div class="field"><label>标签 / 归属合集（用英文或中文逗号隔开）</label><input type="text" id="tagsInput" placeholder="例如：纪念日, 第一次约会, 美食"></div>
       <div class="modal-footer">
         <button class="btn" onclick="closeModal('editModal')">取消</button>
-        <button class="btn btn-primary" onclick="saveEntry()">锁进时光时光云端</button>
+        <button class="btn btn-primary" onclick="saveEntry()">锁进时光云端</button>
       </div>
     </div>
   </div>
@@ -337,12 +337,11 @@ const TABLE='diary_entries';
 let entries=[],passphrase='',editId=null,imgData=null;
 let currentBookPagesCount=0, currentFlipIndex=0;
 
-// ===== 【超级修复重构】PostgREST 标准 Headers 安全强穿透引擎 =====
+// ===== 【超级修复重构】PostgREST 纯正标准底层解析引擎 =====
 async function sbFetch(path, method='GET', bodyData=null){
-  // 1. 自动清除前后的隐形空格
+  // 强行清理 URL 中的多余非法空白
   const cleanPath = path.replace(/\s+/g, '');
   
-  // 2. 将口令暗号拼入标准的数据库查询过滤 Headers 中，彻底废除 URL 拼接引发的崩溃
   const headers = {
     'apikey': SUPABASE_KEY,
     'Authorization': 'Bearer ' + SUPABASE_KEY,
@@ -352,7 +351,7 @@ async function sbFetch(path, method='GET', bodyData=null){
   
   let url = SUPABASE_URL + '/rest/v1/' + cleanPath;
   
-  // 3. 构建安全的查询条件
+  // 【最核心更新点】：数据拉取时使用标准的 `eq.` 条件表达式，并且不和口令本身产生二次转义冲突，杜绝 400 算子报错
   if(method === 'GET'){
     const separator = url.includes('?') ? '&' : '?';
     url += separator + 'passphrase=eq.' + encodeURIComponent(passphrase) + '&t=' + Date.now();
@@ -369,7 +368,7 @@ async function sbFetch(path, method='GET', bodyData=null){
       const t=await res.text(); return t?JSON.parse(t):[];
     } catch(err) {
       lastError = err;
-      await new Promise(resolve => setTimeout(resolve, i * 200 + 100)); 
+      await new Promise(resolve => setTimeout(resolve, i * 150 + 50)); 
     }
   }
   throw lastError;
@@ -387,7 +386,7 @@ function hideLoading(){
 async function loadFromCloud(){
   showLoading('正在开启专属回忆相册…');
   try{
-    // 改用全新安全架构请求流
+    // 带入全新标准算子表达式执行无障碍拉取
     const data = await sbFetch(TABLE + '?order=date.desc', 'GET');
     entries=data.map(r=>({id:r.id,title:r.title||'',date:r.date||'',text:r.content||'',tags:r.tags||[],img:r.img||null}));
     setSyncStatus('ok','已甜美同步');
@@ -446,7 +445,7 @@ function renderShelf(){
   
   if(entries.length===0){
     if(emptyState) emptyState.style.display='block';
-    if(subtitle) subtitle.textContent='还没有时光录入';
+    if(subtitle) subtitle.textContent='还没有时光手帐';
     return;
   }
   if(emptyState) emptyState.style.display='none';
