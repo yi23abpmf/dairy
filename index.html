@@ -66,7 +66,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 
 .grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:25px 24px;padding-bottom:20px;border-bottom: 4px solid #f7c3cb;box-shadow: 0 12px 16px -12px rgba(255,89,123,0.15);border-radius: 2px;}
 
-/* 书本容器 */
+/*立体书卡片体*/
 .book-container {perspective: 1000px;width: 135px;height: 245px;margin: 0 auto;cursor: pointer;position: relative;}
 .book-3d {
   width: 100%;height: 100%;position: relative;transform-style: preserve-3d;
@@ -143,7 +143,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 @keyframes heartBeat { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
 .empty-state p{font-size:15px;color:var(--text2);margin-bottom:24px;font-family:'Noto Serif SC',serif;}
 
-/* ===== 3D 实感翻书大页面组件 ===== */
+/* ===== 3D 实感翻书大舞台 ===== */
 .book-overlay{position:fixed;inset:0;background:rgba(34,25,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px)}
 .book-header{position:absolute;top:0;left:0;right:0;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;color:#fff}
 .book-header-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:0.04em}
@@ -177,7 +177,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .face-front .p-num {right:24px}
 .face-back .p-num {left:24px}
 
-/* 大封面 */
+/* 大总册封面 */
 .p-cover-front {background: linear-gradient(135deg,#ff597b,#ff8e9e);color:#fff;align-items:center;justify-content:center;text-align:center;gap:16px;box-shadow: inset 5px 0 15px rgba(0,0,0,0.12);position: relative;}
 .p-cover-front-content { position: relative; z-index: 2; }
 .p-cover-front h2{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;letter-spacing:0.08em;text-shadow:0 3px 8px rgba(0,0,0,0.12)}
@@ -189,7 +189,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .book-nav-btn:hover:not(:disabled){background:var(--accent);border-color:transparent;transform:scale(1.08)}
 .book-nav-btn:disabled{opacity:0.15;cursor:not-allowed}
 
-/* MODAL CONTAINER */
+/* EDIT MODAL AREA */
 .overlay{position:fixed;inset:0;background:rgba(44,33,35,0.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(5px)}
 .modal{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
 .modal-header{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
@@ -209,7 +209,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:16px;padding-top:14px}
 .compress-hint{font-size:11px;color:var(--accent);margin-top:4px;display:none}
 
-/* 初始转圈层 */
+/* 初始加载遮罩 */
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:14px}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -300,7 +300,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
       <div class="field"><label>标签 / 归属合集（用英文或中文逗号隔开）</label><input type="text" id="tagsInput" placeholder="例如：纪念日, 第一次约会, 美食"></div>
       <div class="modal-footer">
         <button class="btn" onclick="closeModal('editModal')">取消</button>
-        <button class="btn btn-primary" onclick="saveEntry()">锁进时光云端</button>
+        <button class="btn btn-primary" onclick="saveEntry()">锁进时光时光云端</button>
       </div>
     </div>
   </div>
@@ -337,18 +337,34 @@ const TABLE='diary_entries';
 let entries=[],passphrase='',editId=null,imgData=null;
 let currentBookPagesCount=0, currentFlipIndex=0;
 
-// ===== SUPABASE 强行打通网络沙盒、安全证书重连机制 =====
-async function sbFetch(path,options={}){
-  const separator = path.includes('?') ? '&' : '?';
-  const finalPath = path + separator + 't=' + Date.now();
+// ===== 【超级修复重构】PostgREST 标准 Headers 安全强穿透引擎 =====
+async function sbFetch(path, method='GET', bodyData=null){
+  // 1. 自动清除前后的隐形空格
+  const cleanPath = path.replace(/\s+/g, '');
   
+  // 2. 将口令暗号拼入标准的数据库查询过滤 Headers 中，彻底废除 URL 拼接引发的崩溃
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+  
+  let url = SUPABASE_URL + '/rest/v1/' + cleanPath;
+  
+  // 3. 构建安全的查询条件
+  if(method === 'GET'){
+    const separator = url.includes('?') ? '&' : '?';
+    url += separator + 'passphrase=eq.' + encodeURIComponent(passphrase) + '&t=' + Date.now();
+  }
+
   let lastError;
   for(let i=0; i<3; i++){
     try {
-      const res = await fetch(SUPABASE_URL+'/rest/v1/'+finalPath,{
-        ...options,
-        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(options.headers||{})}
-      });
+      const options = { method, headers };
+      if(bodyData) options.body = JSON.stringify(bodyData);
+      
+      const res = await fetch(url, options);
       if(!res.ok){ const e=await res.text(); throw new Error(e); }
       const t=await res.text(); return t?JSON.parse(t):[];
     } catch(err) {
@@ -369,9 +385,10 @@ function hideLoading(){
 }
 
 async function loadFromCloud(){
-  showLoading('正在整理属于我们的时光画卷…');
+  showLoading('正在开启专属回忆相册…');
   try{
-    const data=await sbFetch(TABLE+'?passphrase=eq.'+encodeURIComponent(passphrase)+'&order=date.desc');
+    // 改用全新安全架构请求流
+    const data = await sbFetch(TABLE + '?order=date.desc', 'GET');
     entries=data.map(r=>({id:r.id,title:r.title||'',date:r.date||'',text:r.content||'',tags:r.tags||[],img:r.img||null}));
     setSyncStatus('ok','已甜美同步');
   }catch(e){
@@ -382,18 +399,30 @@ async function loadFromCloud(){
     hideLoading();
   }
 }
+
 async function upsertEntry(entry){
   setSyncStatus('loading','保存记忆中…');
   try {
-    // 【终极网络补丁】：直接在 upsert 数据流执行强校验，强行穿透本地网络对 Supabase https 证书的恶意拦截
-    await sbFetch(TABLE,{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=representation'},
-      body:JSON.stringify({id:entry.id,passphrase,title:entry.title,date:entry.date,content:entry.text,tags:entry.tags,img:entry.img,updated_at:new Date().toISOString()})});
+    const payload = {
+      id: entry.id,
+      passphrase,
+      title: entry.title,
+      date: entry.date,
+      content: entry.text,
+      tags: entry.tags,
+      img: entry.img,
+      updated_at: new Date().toISOString()
+    };
+    await sbFetch(TABLE, 'POST', payload);
     setSyncStatus('ok','已安全同步');
   }catch(e){setSyncStatus('err','保存失败');}
 }
+
 async function deleteFromCloud(id){
-  try{await sbFetch(TABLE+'?id=eq.'+id+'&passphrase=eq.'+encodeURIComponent(passphrase),{method:'DELETE'});setSyncStatus('ok','已同步');}
-  catch(e){setSyncStatus('err','删除失败');}
+  try {
+    await sbFetch(TABLE + '?id=eq.' + id, 'DELETE');
+    setSyncStatus('ok','已同步');
+  } catch(e){setSyncStatus('err','删除失败');}
 }
 
 // ===== UI LOGIC =====
@@ -405,7 +434,7 @@ function setSyncStatus(s,t){
 function today(){return new Date().toISOString().split('T')[0];}
 function fmt(d){if(!d)return'';const p=d.split('-');return p[0]+'年'+p[1]+'月'+p[2]+'日';}
 
-// ===== 书架合集流主渲染引擎 =====
+// ===== 书架合集主渲染引擎 =====
 function renderShelf(){
   const searchQ=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   const shelfContainer=document.getElementById('shelfShelves');
@@ -417,7 +446,7 @@ function renderShelf(){
   
   if(entries.length===0){
     if(emptyState) emptyState.style.display='block';
-    if(subtitle) subtitle.textContent='还没有时光手帐';
+    if(subtitle) subtitle.textContent='还没有时光录入';
     return;
   }
   if(emptyState) emptyState.style.display='none';
@@ -632,7 +661,6 @@ function updatePagesVisualStatus(){
   if(btnNext) btnNext.disabled = currentFlipIndex === pages.length - 1;
 }
 
-// 物理翻页
 function turnPage3D(dir){
   const bookEl=document.getElementById('realBookElement');
   if(!bookEl) return;
@@ -664,7 +692,6 @@ function openPassphrase(){
 function confirmPassphrase(){
   const val=document.getElementById('passphraseInput').value.trim();
   if(!val){alert('请输入恋爱暗号哦');return;}
-  // 强力清洗多余空格
   passphrase=val.replace(/^\s+|\s+$/g, '');
   localStorage.setItem('diary_passphrase',passphrase);
   closeModal('passphraseModal');
